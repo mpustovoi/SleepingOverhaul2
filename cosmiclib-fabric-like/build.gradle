@@ -8,7 +8,7 @@ version = project.mod_version
 group = project.maven_group
 
 loom {
-    accessWidenerPath = project(":common").loom.accessWidenerPath
+    accessWidenerPath = project(":${project.modid}-common").loom.accessWidenerPath
 }
 
 dependencies {
@@ -19,5 +19,5 @@ dependencies {
 
     // [CosmicDan] Build fix for Gradle 8 but untested! [check here first if problems come up]
     //compileClasspath(project(path: ":common", configuration: "namedElements")) { transitive false }
-    compileOnly(project(path: ":common", configuration: "namedElements")) { transitive false }
+    compileOnly(project(path: ":${project.modid}-common", configuration: "namedElements")) { transitive false }
 }

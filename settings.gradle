@@ -7,10 +7,12 @@ pluginManagement {
     }
 }
 
-include("common")
-include("fabric-like")
-include("fabric")
-include("quilt")
-include("forge")
+// Note: Be sure the project dir prefix matches modid in modprops.gradle
+include("cosmiclib-common")
+include("cosmiclib-fabric-like")
+include("cosmiclib-fabric")
+include("cosmiclib-quilt")
+include("cosmiclib-forge")
 
-rootProject.name = "CosmicLib"
+// Intentionally disabled, do not use if depending on other projects!
+//rootProject.name =

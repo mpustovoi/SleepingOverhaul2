@@ -1,4 +1,5 @@
 project.ext {
+    modid = "cosmiclib"
     archives_base_name = "CosmicLib"
     mod_version = "2.0.0"
     maven_group = "com.cosmicdan.cosmiclib"
