@@ -1,0 +1,35 @@
+modLoader = "javafml"
+loaderVersion = "[40,)"
+#issueTrackerURL = ""
+license = "All Rights Reserved"
+
+[[mods]]
+modId = "sleepingoverhaul"
+version = "${version}"
+displayName = "SleepingOverhaul"
+authors = "CosmicDan"
+description = '''
+[TODO]
+'''
+logoFile = "logo.png"
+
+[[dependencies.sleepingoverhaul]]
+modId = "forge"
+mandatory = true
+versionRange = "[40,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.sleepingoverhaul]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.18.2,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.sleepingoverhaul]]
+modId = "architectury"
+mandatory = true
+versionRange = "[4.8.79,)"
+ordering = "AFTER"
+side = "BOTH"

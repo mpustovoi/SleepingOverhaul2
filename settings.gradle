@@ -8,11 +8,11 @@ pluginManagement {
 }
 
 // Note: Be sure the project dir prefix matches modid in modprops.gradle
-include("cosmiclib-common")
-include("cosmiclib-fabric-like")
-include("cosmiclib-fabric")
-include("cosmiclib-quilt")
-include("cosmiclib-forge")
+include("sleepingoverhaul-common")
+include("sleepingoverhaul-fabric-like")
+include("sleepingoverhaul-fabric")
+include("sleepingoverhaul-quilt")
+include("sleepingoverhaul-forge")
 
 // Intentionally disabled, do not use if depending on other projects!
 //rootProject.name =

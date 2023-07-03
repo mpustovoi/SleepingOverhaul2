@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sleepingoverhaul",
+  "version": "${version}",
+  "name": "SleepingOverhaul",
+  "description": "[TODO]",
+  "authors": [
+    "CosmicDan"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "All Rights Reserved",
+  "icon": "assets/sleepingoverhaul/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.cosmicdan.sleepingoverhaul.fabric.SleepingOverhaulFabric"
+    ]
+  },
+  "mixins": [
+    "sleepingoverhaul.mixins.json",
+    "sleepingoverhaul-common.mixins.json"
+  ],
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=1.18.2",
+    "architectury": ">=4.8.79"
+  }
+}

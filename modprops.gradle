@@ -1,6 +1,6 @@
 project.ext {
-    modid = "cosmiclib"
-    archives_base_name = "CosmicLib"
+    modid = "sleepingoverhaul"
+    archives_base_name = "SleepingOverhaul"
     mod_version = "2.0.0"
-    maven_group = "com.cosmicdan.cosmiclib"
+    maven_group = "com.cosmicdan.sleepingoverhaul"
 }
