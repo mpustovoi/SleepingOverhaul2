@@ -1,27 +1,27 @@
 {
   "schemaVersion": 1,
-  "id": "examplemod",
+  "id": "cosmiclib",
   "version": "${version}",
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "CosmicLib",
+  "description": "[TODO]",
   "authors": [
-    "Me!"
+    "CosmicDan"
   ],
   "contact": {
     "homepage": "https://fabricmc.net/",
     "sources": "https://github.com/FabricMC/fabric-example-mod"
   },
-  "license": "Insert License Here",
-  "icon": "assets/examplemod/icon.png",
+  "license": "All Rights Reserved",
+  "icon": "assets/cosmiclib/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.examplemod.fabric.ExampleModFabric"
+      "com.cosmicdan.cosmiclib.fabric.CosmicLibFabric"
     ]
   },
   "mixins": [
-    "examplemod.mixins.json",
-    "examplemod-common.mixins.json"
+    "cosmiclib.mixins.json",
+    "cosmiclib-common.mixins.json"
   ],
   "depends": {
     "fabric": "*",

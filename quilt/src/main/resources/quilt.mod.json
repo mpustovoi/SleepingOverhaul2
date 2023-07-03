@@ -1,26 +1,26 @@
 {
   "schema_version": 1,
   "mixin": [
-    "examplemod.mixins.json",
-    "examplemod-common.mixins.json"
+    "cosmiclib.mixins.json",
+    "cosmiclib-common.mixins.json"
   ],
   "quilt_loader": {
     "group": "${group}",
-    "id": "examplemod",
+    "id": "cosmiclib",
     "version": "${version}",
-    "name": "Example Mod",
-    "description": "This is an example description! Tell everyone what your mod is about!",
-    "authors": ["Me!"],
+    "name": "CosmicLib",
+    "description": "[TODO]",
+    "authors": ["CosmicDan"],
     "contact": {
       "sources": "https://github.com/architectury/architectury-templates"
     },
     "license": "Insert License Here",
-    "icon": "assets/examplemod/icon.png",
+    "icon": "assets/cosmiclib/icon.png",
     "intermediate_mappings": "net.fabricmc:intermediary",
     "environment": "*",
     "entrypoints": {
       "init": [
-        "net.examplemod.quilt.ExampleModQuilt"
+        "com.cosmicdan.cosmiclib.quilt.CosmicLibQuilt"
       ]
     },
     "depends": [

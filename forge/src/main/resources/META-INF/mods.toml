@@ -1,33 +1,33 @@
 modLoader = "javafml"
 loaderVersion = "[40,)"
 #issueTrackerURL = ""
-license = "Insert License Here"
+license = "All Rights Reserved"
 
 [[mods]]
-modId = "examplemod"
+modId = "cosmiclib"
 version = "${version}"
-displayName = "Example Mod"
-authors = "Me!"
+displayName = "CosmicLib"
+authors = "CosmicDan"
 description = '''
-This is an example description! Tell everyone what your mod is about!
+[TODO]
 '''
-#logoFile = ""
+logoFile = "assets/cosmiclib/icon.png"
 
-[[dependencies.examplemod]]
+[[dependencies.cosmiclib]]
 modId = "forge"
 mandatory = true
 versionRange = "[40,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.examplemod]]
+[[dependencies.cosmiclib]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[1.18.2,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.examplemod]]
+[[dependencies.cosmiclib]]
 modId = "architectury"
 mandatory = true
 versionRange = "[4.8.79,)"
