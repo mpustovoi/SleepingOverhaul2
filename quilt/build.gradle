@@ -2,6 +2,11 @@ plugins {
     id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
+apply from: '../modprops.gradle'
+archivesBaseName = project.archives_base_name
+version = project.mod_version
+group = project.maven_group
+
 repositories {
     maven { url "https://maven.quiltmc.org/repository/release/" }
 }
@@ -40,11 +45,11 @@ dependencies {
 }
 
 processResources {
-    inputs.property "group", rootProject.maven_group
+    inputs.property "group", project.maven_group
     inputs.property "version", project.version
 
     filesMatching("quilt.mod.json") {
-        expand "group": rootProject.maven_group,
+        expand "group": project.maven_group,
                 "version": project.version
     }
 }
@@ -82,7 +87,7 @@ components.java {
 publishing {
     publications {
         mavenQuilt(MavenPublication) {
-            artifactId = rootProject.archives_base_name + "-" + project.name
+            artifactId = project.archives_base_name + "-" + project.name
             from components.java
         }
     }

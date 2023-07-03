@@ -2,6 +2,11 @@ architectury {
     common(rootProject.enabled_platforms.split(","))
 }
 
+apply from: '../modprops.gradle'
+archivesBaseName = project.archives_base_name
+version = project.mod_version
+group = project.maven_group
+
 loom {
     accessWidenerPath = project(":common").loom.accessWidenerPath
 }

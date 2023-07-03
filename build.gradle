@@ -5,6 +5,10 @@ plugins {
     id "dev.architectury.loom" version "1.2.348" apply false
 }
 
+apply from: 'modprops.gradle'
+version = project.mod_version
+group = project.maven_group
+
 architectury {
     minecraft = rootProject.minecraft_version
 }
@@ -30,9 +34,10 @@ allprojects {
     apply plugin: "architectury-plugin"
     apply plugin: "maven-publish"
 
-    archivesBaseName = rootProject.archives_base_name
-    version = rootProject.mod_version
-    group = rootProject.maven_group
+    // Moved to each individual subproject
+    //archivesBaseName = 
+    //version = 
+    //group = 
 
     repositories {
         // Add repositories to retrieve artifacts from in here.
