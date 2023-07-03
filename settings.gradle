@@ -16,3 +16,14 @@ include("sleepingoverhaul-forge")
 
 // Intentionally disabled, do not use if depending on other projects!
 //rootProject.name =
+
+include("cosmiclib-common")
+project(':cosmiclib-common').projectDir = new File('../CosmicLib/cosmiclib-common')
+include("cosmiclib-fabric-like")
+project(':cosmiclib-fabric-like').projectDir = new File('../CosmicLib/cosmiclib-fabric-like')
+include("cosmiclib-fabric")
+project(':cosmiclib-fabric').projectDir = new File('../CosmicLib/cosmiclib-fabric')
+include("cosmiclib-quilt")
+project(':cosmiclib-quilt').projectDir = new File('../CosmicLib/cosmiclib-quilt')
+include("cosmiclib-forge")
+project(':cosmiclib-forge').projectDir = new File('../CosmicLib/cosmiclib-forge')
