@@ -15,6 +15,8 @@ import java.util.function.Supplier;
 
 public class SleepingOverhaul {
     public static final String MOD_ID = "sleepingoverhaul";
+
+    /*
     // We can use this if we don't want to use DeferredRegister
     public static final Supplier<Registries> REGISTRIES = Suppliers.memoize(() -> Registries.get(MOD_ID));
     // Registering a new creative tab
@@ -30,4 +32,11 @@ public class SleepingOverhaul {
         
         System.out.println(ExampleExpectPlatform.getConfigDirectory().toAbsolutePath().normalize().toString());
     }
+
+     */
+
+    public static void init() {
+
+    }
+
 }
