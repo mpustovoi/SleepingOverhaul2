@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
 /**
  * Responsible for changing the tick rate during timelapse
@@ -19,9 +20,16 @@ public abstract class MinecraftServerMixin {
 
     //private static final long MS_PER_TICK_NORMAL = 50L;
 
+    /*
     @ModifyConstantChecked(
             method = "runServer",
             onFailure = GetMsPerTickFailure.class,
+            constant = @Constant(longValue = 50L), require = 4, allow = 4
+    )
+
+     */
+    @ModifyConstant(
+            method = "runServer()V",
             constant = @Constant(longValue = 50L), require = 4, allow = 4
     )
     private long getMsPerTick(final long currentMsPerTick) {
