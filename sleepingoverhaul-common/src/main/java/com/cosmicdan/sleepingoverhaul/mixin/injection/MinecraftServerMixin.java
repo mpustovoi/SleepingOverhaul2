@@ -1,14 +1,13 @@
 package com.cosmicdan.sleepingoverhaul.mixin.injection;
 
-import com.cosmicdan.cosmiclib.mixinex.ModifyConstantChecked;
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
-import com.cosmicdan.sleepingoverhaul.mixin.errorhandler.MinecraftServerMixinFailure.GetMsPerTickFailure;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
+
+import java.util.function.BooleanSupplier;
 
 /**
  * Responsible for changing the tick rate during timelapse
@@ -16,32 +15,21 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
  */
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin {
-    @Shadow public abstract ServerLevel overworld();
+    @Shadow public abstract void tickServer(BooleanSupplier booleanSupplier);
 
-    //private static final long MS_PER_TICK_NORMAL = 50L;
+    @Shadow protected abstract boolean haveTime();
 
-    /*
-    @ModifyConstantChecked(
-            method = "runServer",
-            onFailure = GetMsPerTickFailure.class,
-            constant = @Constant(longValue = 50L), require = 4, allow = 4
-    )
-
-     */
-    @ModifyConstant(
+    @Redirect(
             method = "runServer()V",
-            constant = @Constant(longValue = 50L), require = 4, allow = 4
+            at = @At(value = "INVOKE", target = "net/minecraft/server/MinecraftServer.tickServer (Ljava/util/function/BooleanSupplier;)V")
     )
-    private long getMsPerTick(final long currentMsPerTick) {
-        /*
-        if (currentMsPerTick != MS_PER_TICK_NORMAL) {
-            // TODO: something else has modified the server MS per tick...?
-            //       Log warning (only once, to prevent spam)
+    private void onCallTickServer(MinecraftServer self, BooleanSupplier haveTimeSupplier) {
+        if (SleepingOverhaul.timelapseEnd > 0) {
+            while(haveTime()) {
+                tickServer(SleepingOverhaul.ALWAYS_TRUE_SUPPLIER);
+            }
+        } else {
+            tickServer(haveTimeSupplier);
         }
-         */
-        if (SleepingOverhaul.timelapseEnd > 0)
-            return 1L;
-        else
-            return currentMsPerTick;
     }
 }
