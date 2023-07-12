@@ -20,9 +20,15 @@ public class ServerConfig {
     public final ForgeConfigSpec.BooleanValue morningResetWeather;
     private static final String morningResetWeatherTxt = "Reset the weather on morning (when players wake) if raining.";
 
-    // TODO: Remove these for now, and make it impossible to wakeup from timelapse.
-    //       First remove the Sleep and Leave Bed buttons, then prevent server from accepting wake packet (check InBedChatScreen)
-    //private static final String sectionTimelapse = "timelapse";
+    private static final String sectionTimelapse = "timelapse";
+    public final ForgeConfigSpec.BooleanValue disableNaturalSpawning;
+    private static final String disableNaturalSpawningTxt = "If true, natural spawning will be disabled during timelapse.\n" +
+            "Gives a minor speed boost.";
+    public final ForgeConfigSpec.BooleanValue disableLivingEntityTravel;
+    private static final String disableLivingEntityTravelTxt = "If true, LivingEntity type mobs will not travel during timelapse. Gives a minor speed boost.\n" +
+            "Disabled by default since it could result in undesired loss, e.g. mobs drowning.\n" +
+            "Gives a minor speed boost.";
+    // disabled for now since it needs extra work (prevent wakeup is always-on)
     //public final ForgeConfigSpec.BooleanValue timelapsePreventWakeup;
     //private static final String timelapsePreventWakeupTxt = "Prevents players from waking up during timelapse (players will only wake when morning arrives)";
     //public final ForgeConfigSpec.BooleanValue timelapsePreventMoving;
@@ -62,8 +68,15 @@ public class ServerConfig {
                 .define("morningResetWeather", true);
         builder.pop();
 
-        /*
+
         builder.push(sectionTimelapse);
+        disableNaturalSpawning = builder
+                .comment(disableNaturalSpawningTxt)
+                .define("disableNaturalSpawning", true);
+        disableLivingEntityTravel = builder
+                .comment(disableLivingEntityTravelTxt)
+                .define("disableLivingEntityTravel", false);
+        /*
         timelapsePreventWakeup = builder
                 .comment(timelapsePreventWakeupTxt)
                 .define("timelapsePreventWakeup", true);

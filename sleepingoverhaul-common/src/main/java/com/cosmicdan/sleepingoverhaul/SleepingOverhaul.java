@@ -19,6 +19,8 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.function.BooleanSupplier;
+
 public class SleepingOverhaul {
     public static final String MOD_ID = "sleepingoverhaul";
     public static final ResourceLocation PACKET_REALLY_SLEEPING = new ResourceLocation(MOD_ID, "is_really_sleeping");
@@ -33,6 +35,8 @@ public class SleepingOverhaul {
     public static CommonConfig CONFIG_COMMON;
 
     public static long timelapseEnd = -1;
+
+    public static final BooleanSupplier ALWAYS_TRUE_SUPPLIER = SleepingOverhaul::alwaysTrue;
 
     /*
     // We can use this if we don't want to use DeferredRegister
@@ -105,5 +109,9 @@ public class SleepingOverhaul {
         final Player player = context.getPlayer();
         final boolean timelapseEnabled = buf.readBoolean();
         CLIENT_STATE.setTimelapseEnabled(timelapseEnabled);
+    }
+
+    private static boolean alwaysTrue() {
+        return true;
     }
 }

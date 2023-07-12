@@ -23,7 +23,9 @@ public class MixinPluginCommon implements IMixinConfigPlugin {
             "ServerLevelMixin",
             "PlayerMixin",
             "ServerPlayerMixin",
-            "ServerGamePacketLstnrMixin"
+            "ServerGamePacketLstnrMixin",
+            "LivingEntityMixin",
+            "NaturalSpawnerMixin",
     };
     private static final String[] MIXINS_CLIENT_ONLY = {
             "InBedChatScreenMixin",
