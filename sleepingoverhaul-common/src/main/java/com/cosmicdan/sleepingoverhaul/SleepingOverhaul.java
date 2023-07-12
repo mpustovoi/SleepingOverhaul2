@@ -67,14 +67,13 @@ public class SleepingOverhaul {
         ModConfigHelper.registerConfig(ModConfig.Type.COMMON, CONFIG_SPEC_COMMON);
          */
 
-        if (Platform.getEnvironment() == Env.CLIENT)
-            CLIENT_STATE = new ClientState();
-        else
-            CLIENT_STATE = new ClientStateDummy();
-
         NetworkManager.registerReceiver(Side.C2S, PACKET_REALLY_SLEEPING, SleepingOverhaul::onReallySleepingRecv);
-        NetworkManager.registerReceiver(Side.S2C, PACKET_SLEEPERROR_TIME, SleepingOverhaul::onSleepErrorTimeRecv);
-        NetworkManager.registerReceiver(Side.S2C, PACKET_TIMELAPSE_CHANGE, SleepingOverhaul::onTimelapseChange);
+        if (Platform.getEnvironment() == Env.CLIENT) {
+            NetworkManager.registerReceiver(Side.S2C, PACKET_SLEEPERROR_TIME, SleepingOverhaul::onSleepErrorTimeRecv);
+            NetworkManager.registerReceiver(Side.S2C, PACKET_TIMELAPSE_CHANGE, SleepingOverhaul::onTimelapseChange);
+            CLIENT_STATE = new ClientState();
+        } else
+            CLIENT_STATE = new ClientStateDummy();
     }
 
     public static boolean canSleepNow(final Level level) {
