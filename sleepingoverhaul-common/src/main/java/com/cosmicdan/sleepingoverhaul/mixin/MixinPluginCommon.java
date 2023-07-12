@@ -20,9 +20,14 @@ import java.util.Set;
 public class MixinPluginCommon implements IMixinConfigPlugin {
     private static final String[] MIXINS_COMMON = {
             "MinecraftServerMixin",
+            "ServerLevelMixin",
+            "PlayerMixin",
+            "ServerPlayerMixin",
+            "ServerGamePacketLstnrMixin"
     };
     private static final String[] MIXINS_CLIENT_ONLY = {
-
+            "InBedChatScreenMixin",
+            "CameraMixin",
     };
     private static final String[] MIXINS_SERVER_ONLY = {
 
@@ -53,12 +58,8 @@ public class MixinPluginCommon implements IMixinConfigPlugin {
         final List<String> mixinsToLoad = new ArrayList<>(8);
         mixinsToLoad.addAll(Arrays.asList(MIXINS_COMMON));
         switch (Platform.getEnvironment()) {
-            case CLIENT:
-                mixinsToLoad.addAll(Arrays.asList(MIXINS_CLIENT_ONLY));
-                break;
-            case SERVER:
-                mixinsToLoad.addAll(Arrays.asList(MIXINS_SERVER_ONLY));
-                break;
+            case CLIENT -> mixinsToLoad.addAll(Arrays.asList(MIXINS_CLIENT_ONLY));
+            case SERVER -> mixinsToLoad.addAll(Arrays.asList(MIXINS_SERVER_ONLY));
         }
         return mixinsToLoad;
     }

@@ -6,7 +6,6 @@ import org.objectweb.asm.tree.*;
 import org.spongepowered.asm.logging.Level;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.injection.code.Injector;
-import org.spongepowered.asm.mixin.injection.invoke.InvokeInjector;
 import org.spongepowered.asm.mixin.injection.invoke.ModifyConstantInjector;
 import org.spongepowered.asm.mixin.injection.invoke.RedirectInjector;
 import org.spongepowered.asm.mixin.injection.invoke.util.InsnFinder;

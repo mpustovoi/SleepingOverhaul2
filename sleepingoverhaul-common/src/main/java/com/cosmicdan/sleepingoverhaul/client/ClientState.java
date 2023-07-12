@@ -1,0 +1,108 @@
+package com.cosmicdan.sleepingoverhaul.client;
+
+import com.cosmicdan.sleepingoverhaul.IClientState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.InBedChatScreen;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+/**
+ * @author Daniel 'CosmicDan' Connolly
+ */
+public class ClientState implements IClientState {
+    private Button leaveButton = null;
+    private Button sleepButton = null;
+    /**
+     * 0 = Inactive/Stopped
+     * 1 = Started
+     * 2 = Playing
+     * 3 = Ended
+     */
+    private int timelapseCinematicStage = 0;
+
+    @Override
+    public boolean isSleepButtonActive() {
+        return (sleepButton != null) && sleepButton.isActive();
+    }
+
+    @Override
+    public <T> void leaveBedButtonAssign(final T buttonRaw) {
+        if (buttonRaw instanceof Button button) {
+            leaveButton = button;
+        }
+    }
+
+    @Override
+    public <T> void sleepButtonAssign(final T buttonRaw) {
+        if (buttonRaw instanceof Button button) {
+            sleepButton = button;
+        }
+    }
+
+    @Override
+    public void sleepButtonDisable() {
+        if (sleepButton != null)
+            sleepButton.active = false;
+    }
+
+    /**
+     * Just some simple client-side packet spam prevention
+     */
+    @Override
+    public void doSleepButtonCooldown() {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (sleepButton != null)
+                    sleepButton.active = true;
+            }
+        }, 2000);
+    }
+
+    @Override
+    public void setTimelapseEnabled(final boolean timelapseEnabled) {
+        if (timelapseEnabled) {
+            if (timelapseCinematicStage == 0)
+                timelapseCinematicStage = 1;
+        } else {
+            timelapseCinematicStage = 3;
+        }
+
+        // also update timelapse screen
+        if (Minecraft.getInstance().screen != null) {
+            if (Minecraft.getInstance().screen instanceof InBedChatScreen screenBedChat) {
+                //((InBedChatScreenProxy) screenBedChat).onTimelapseChange(timelapseEnabled);
+                if (timelapseEnabled) {
+                    // timelapse started, remove the buttons
+                    removeBedScreenButtons();
+                } else {
+                    // timelapse ended, switch to regular chat screen if there is text still in chat box
+                    screenBedChat.onPlayerWokeUp();
+                }
+            }
+        }
+    }
+
+    @Override
+    public int getTimelapseCinematicStage() {
+        return timelapseCinematicStage;
+    }
+
+    @Override
+    public void advanceTimelapseCinematicStage() {
+        if (timelapseCinematicStage == 3)
+            timelapseCinematicStage = 0;
+        else
+            timelapseCinematicStage++;
+    }
+
+    @Override
+    public void removeBedScreenButtons() {
+        if (leaveButton != null)
+            leaveButton.visible = false;
+        if (sleepButton != null)
+            sleepButton.visible = false;
+    }
+}

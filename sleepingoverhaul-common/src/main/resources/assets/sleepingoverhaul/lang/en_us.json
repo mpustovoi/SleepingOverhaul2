@@ -1,3 +1,6 @@
 {
-  "item.sleepingoverhaul.example_item": "Example Item"
+  "item.sleepingoverhaul.example_item": "Example Item",
+  "config.sleepingoverhaul.sleepAction": "The action to perform when all players are sleeping",
+  
+  "gui.sleepingoverhaul.sleepButton": "Sleep"
 }

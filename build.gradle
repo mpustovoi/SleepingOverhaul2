@@ -26,6 +26,12 @@ subprojects {
         mappings loom.officialMojangMappings()
         // The following line declares the yarn mappings you may select this one as well.
         // mappings "net.fabricmc:yarn:1.18.2+build.4:v2"
+        
+        // TODO: Use this and rewrite mixins to be more compatible
+        // https://github.com/LlamaLad7/MixinExtras/wiki
+        // Of partuclar note is the Share annotation to send variable between methods in one mixin (could be used to optimize Sleep button stuff, i.e. remove the need for ClientState proxy)
+        //implementation("com.github.LlamaLad7:MixinExtras:0.1.1")
+        //annotationProcessor("com.github.LlamaLad7:MixinExtras:0.1.1")
     }
     
     clean.doLast {
@@ -45,11 +51,8 @@ allprojects {
     //group = 
 
     repositories {
-        // Add repositories to retrieve artifacts from in here.
-        // You should only use this when depending on other mods because
-        // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-        // See https://docs.gradle.org/current/userguide/declaring_repositories.html
-        // for more information about repositories.
+        maven { url = "https://cursemaven.com" }
+        maven { url = "https://jitpack.io" }
     }
 
     tasks.withType(JavaCompile) {

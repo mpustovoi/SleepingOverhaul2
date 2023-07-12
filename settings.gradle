@@ -9,9 +9,9 @@ pluginManagement {
 
 // Note: Be sure the project dir prefix matches modid in modprops.gradle
 include("sleepingoverhaul-common")
-include("sleepingoverhaul-fabric-like")
-include("sleepingoverhaul-fabric")
-include("sleepingoverhaul-quilt")
+//include("sleepingoverhaul-fabric-like")
+//include("sleepingoverhaul-fabric")
+//include("sleepingoverhaul-quilt")
 include("sleepingoverhaul-forge")
 
 // Intentionally disabled, do not use if depending on other projects!
