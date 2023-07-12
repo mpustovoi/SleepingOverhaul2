@@ -9,25 +9,26 @@ import net.minecraftforge.common.ForgeConfigSpec.Builder;
 public class ServerConfig {
     private static final String sectionGeneral = "general";
     public final ForgeConfigSpec.EnumValue<SleepAction> sleepAction;
-    private static final String sleepActionTxt = "The action to perform when all players are sleeping";
+    private static final String sleepActionTxt = " The action to perform when all players are sleeping";
 
     private static final String sectionMorning = "morning";
     // TODO: Disabled because client (or player) has a "prevent sleep during day" hardcoded check
     //public final ForgeConfigSpec.IntValue morningHour;
-    //private static final String morningHourTxt = "The hour of day to consider as 'morning' (for waking players)";
+    //private static final String morningHourTxt = " The hour of day to consider as 'morning' (for waking players)";
     //public final ForgeConfigSpec.IntValue morningMinute;
-    //private static final String morningMinuteTxt = "The minute of day to consider as 'morning', past the hour (for waking players)";
+    //private static final String morningMinuteTxt = " The minute of day to consider as 'morning', past the hour (for waking players)";
     public final ForgeConfigSpec.BooleanValue morningResetWeather;
-    private static final String morningResetWeatherTxt = "Reset the weather on morning (when players wake) if raining.";
+    private static final String morningResetWeatherTxt = " Reset the weather on morning (when players wake) if raining.";
 
     private static final String sectionTimelapse = "timelapse";
     public final ForgeConfigSpec.BooleanValue disableNaturalSpawning;
-    private static final String disableNaturalSpawningTxt = "If true, natural spawning will be disabled during timelapse.\n" +
-            "Gives a minor speed boost.";
+    private static final String disableNaturalSpawningTxt = " If true, natural spawning will be disabled during timelapse.\n" +
+            " Gives a minor speed boost.";
     public final ForgeConfigSpec.BooleanValue disableLivingEntityTravel;
-    private static final String disableLivingEntityTravelTxt = "If true, LivingEntity type mobs will not travel during timelapse. Gives a minor speed boost.\n" +
-            "Disabled by default since it could result in undesired loss, e.g. mobs drowning.\n" +
-            "Gives a minor speed boost.";
+    private static final String disableLivingEntityTravelTxt = " If true, LivingEntity type mobs will not travel during timelapse. Gives a minor speed boost.\n" +
+            " Disabled by default since it could result in undesired loss, e.g. mobs drowning.\n" +
+            " Note that this does NOT seem to include Villager movement.\n" +
+            " Gives a minor speed boost.";
     // disabled for now since it needs extra work (prevent wakeup is always-on)
     //public final ForgeConfigSpec.BooleanValue timelapsePreventWakeup;
     //private static final String timelapsePreventWakeupTxt = "Prevents players from waking up during timelapse (players will only wake when morning arrives)";
@@ -36,9 +37,9 @@ public class ServerConfig {
 
     private static final String sectionBedrest = "bedRest";
     public final ForgeConfigSpec.BooleanValue bedRestEnabled;
-    private static final String bedRestEnabledTxt = "Allows players to rest in a bed without sleeping, adding a 'Sleep' button next to 'Leave Bed'";
+    private static final String bedRestEnabledTxt = " Allows players to rest in a bed without sleeping, adding a 'Sleep' button next to 'Leave Bed'";
     public final ForgeConfigSpec.BooleanValue bedRestOnEnter;
-    private static final String bedRestOnEnterTxt = "Allows pressing Enter with no chat text to activate Sleep while resting. Requires the above bedRestEnabled to be true.";
+    private static final String bedRestOnEnterTxt = " Allows pressing Enter with no chat text to activate Sleep while resting. Requires the above bedRestEnabled to be true.";
 
     //private static final String sectionRestrictions = "restrictions";
     //public final ForgeConfigSpec.BooleanValue dayCheckOverride;
@@ -83,8 +84,8 @@ public class ServerConfig {
         timelapsePreventMoving = builder
                 .comment(timelapsePreventMovingTxt)
                 .define("timelapsePreventMoving", true);
-        builder.pop();
          */
+        builder.pop();
 
         builder.push(sectionBedrest);
         bedRestEnabled = builder
