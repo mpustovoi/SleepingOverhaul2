@@ -30,6 +30,6 @@ side = "BOTH"
 [[dependencies.sleepingoverhaul]]
 modId = "architectury"
 mandatory = true
-versionRange = "[4.8.79,)"
+versionRange = "[4.11.93,)"
 ordering = "AFTER"
 side = "BOTH"
