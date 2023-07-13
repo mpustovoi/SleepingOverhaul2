@@ -1,13 +1,9 @@
 package com.cosmicdan.sleepingoverhaul.mixin;
 
-import com.cosmicdan.cosmiclib.mixinex.ModifyConstantChecked;
-import com.cosmicdan.cosmiclib.mixinex.ModifyConstantCheckedInjectionInfo;
 import dev.architectury.platform.Platform;
-import dev.architectury.utils.Env;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
-import org.spongepowered.asm.mixin.injection.struct.InjectionInfo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +33,7 @@ public class MixinPluginCommon implements IMixinConfigPlugin {
 
     @Override
     public void onLoad(String mixinPackage) {
-        InjectionInfo.register(ModifyConstantCheckedInjectionInfo.class);  // @ModifyConstantChecked
+        //InjectionInfo.register(ModifyConstantCheckedInjectionInfo.class);  // @ModifyConstantChecked
     }
 
     @Override

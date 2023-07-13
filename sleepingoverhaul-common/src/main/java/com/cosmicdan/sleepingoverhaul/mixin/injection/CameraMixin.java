@@ -24,7 +24,7 @@ public abstract class CameraMixin {
 
     @Shadow protected abstract void move(double d, double e, double f);
 
-    @Shadow protected abstract double getMaxZoom(double d);
+    @Shadow protected abstract double getMaxZoom(double d); // reminder: used for chase cam collision
 
     @Shadow protected abstract void setRotation(float f, float g);
 
