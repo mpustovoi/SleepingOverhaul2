@@ -5,6 +5,7 @@ import com.mojang.authlib.minecraft.client.MinecraftClient;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
@@ -27,6 +28,8 @@ public abstract class CameraMixin {
 
     @Shadow protected abstract void setRotation(float f, float g);
 
+    @Shadow public abstract BlockPos getBlockPosition();
+
     @Inject(
             method = "setup",
             at = @At("TAIL"))
@@ -43,7 +46,14 @@ public abstract class CameraMixin {
                 // rotate first
                 setRotation((timeOfDayAsFraction * 360.0f * 2.0f) - 90, 0.0f);
                 // move camera back and up
-                move(-getMaxZoom(6.0), 3.0, 0.0);
+                move(-6.0, 2.0, 0.0);
+                int moveCounter = 0;
+                while (moveCounter < 10) {
+                    move(-1.0, 1.0, 0.0);
+                    if (level.canSeeSky(getBlockPosition()))
+                        break;
+                    moveCounter++;
+                }
                 // finally set FoV 90
                 Minecraft.getInstance().gameRenderer.setPanoramicMode(true);
             }
