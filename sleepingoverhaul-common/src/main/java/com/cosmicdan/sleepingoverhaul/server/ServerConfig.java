@@ -21,6 +21,8 @@ public class ServerConfig {
     private static final String morningResetWeatherTxt = " Reset the weather on morning (when players wake) if raining.";
 
     private static final String sectionTimelapse = "timelapse";
+    public final ForgeConfigSpec.BooleanValue logTimelapsePerformanceStats;
+    private static final String logTimelapsePerformanceStatsTxt = " If true, will performance stats will be logged on timelapse end (average TPS, total time, total ticks)";
     public final ForgeConfigSpec.BooleanValue disableNaturalSpawning;
     private static final String disableNaturalSpawningTxt = " If true, natural spawning will be disabled during timelapse.\n" +
             " Gives a minor speed boost.";
@@ -71,6 +73,9 @@ public class ServerConfig {
 
 
         builder.push(sectionTimelapse);
+        logTimelapsePerformanceStats = builder
+                .comment(logTimelapsePerformanceStatsTxt)
+                .define("logTimelapsePerformanceStats", true);
         disableNaturalSpawning = builder
                 .comment(disableNaturalSpawningTxt)
                 .define("disableNaturalSpawning", true);

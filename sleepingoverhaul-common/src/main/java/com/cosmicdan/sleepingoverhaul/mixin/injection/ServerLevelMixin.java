@@ -1,7 +1,6 @@
 package com.cosmicdan.sleepingoverhaul.mixin.injection;
 
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
-import com.cosmicdan.sleepingoverhaul.server.ServerConfig;
 import com.mojang.logging.LogUtils;
 import dev.architectury.networking.NetworkManager;
 import io.netty.buffer.Unpooled;
@@ -63,11 +62,13 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
                         if (SleepingOverhaul.timelapseEnd == -1) {
                             SleepingOverhaul.timelapseEnd = getNextMorning();
                             notifyPlayersTimelapseChange(true);
+                            SleepingOverhaul.onTimelapseStart();
                         } else if (SleepingOverhaul.timelapseEnd == -2) {
                             SleepingOverhaul.timelapseEnd = -1;
                             wakeUpAllPlayers();
                             resetWeatherCycleIfNeeded();
                             notifyPlayersTimelapseChange(false);
+                            SleepingOverhaul.onTimelapseEnd();
                         }
                     }
                     case SkipToDay -> {

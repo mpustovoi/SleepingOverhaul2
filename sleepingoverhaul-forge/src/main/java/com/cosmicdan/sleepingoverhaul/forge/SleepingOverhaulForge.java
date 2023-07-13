@@ -3,8 +3,8 @@ package com.cosmicdan.sleepingoverhaul.forge;
 import dev.architectury.platform.forge.EventBuses;
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -29,5 +29,11 @@ public class SleepingOverhaulForge {
     public void onSleepingTimeCheck(final SleepingTimeCheckEvent event) {
         if (SleepingOverhaul.CONFIG_SERVER.bedRestEnabled.get())
             event.setResult(Result.ALLOW);
+    }
+
+    @SubscribeEvent
+    public void onServerTick(final TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END)
+            SleepingOverhaul.onServerTickPost();
     }
 }

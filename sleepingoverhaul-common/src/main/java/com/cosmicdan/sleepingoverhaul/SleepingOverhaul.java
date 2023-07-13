@@ -4,12 +4,14 @@ import com.cosmicdan.sleepingoverhaul.client.ClientState;
 import com.cosmicdan.sleepingoverhaul.mixin.proxy.PlayerMixinProxy;
 import com.cosmicdan.sleepingoverhaul.server.ClientStateDummy;
 import com.cosmicdan.sleepingoverhaul.server.ServerConfig;
+import com.mojang.logging.LogUtils;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.networking.NetworkManager.PacketContext;
 import dev.architectury.networking.NetworkManager.Side;
 import dev.architectury.platform.Platform;
 import dev.architectury.utils.Env;
 import io.netty.buffer.Unpooled;
+import net.minecraft.Util;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,25 +20,30 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
 
 import java.util.function.BooleanSupplier;
 
 public class SleepingOverhaul {
     public static final String MOD_ID = "sleepingoverhaul";
+    private static final Logger LOGGER = LogUtils.getLogger();
     public static final ResourceLocation PACKET_REALLY_SLEEPING = new ResourceLocation(MOD_ID, "is_really_sleeping");
     public static final ResourceLocation PACKET_SLEEPERROR_TIME = new ResourceLocation(MOD_ID, "sleep_error_time");
     public static final ResourceLocation PACKET_TIMELAPSE_CHANGE = new ResourceLocation(MOD_ID, "timelapse_change");
 
-    public static IClientState CLIENT_STATE;
+    public static IClientState CLIENT_STATE = null;
 
-    private static ForgeConfigSpec CONFIG_SPEC_SERVER;
-    public static ServerConfig CONFIG_SERVER;
-    private static ForgeConfigSpec CONFIG_SPEC_COMMON;
-    public static CommonConfig CONFIG_COMMON;
-
-    public static long timelapseEnd = -1;
+    private static ForgeConfigSpec CONFIG_SPEC_SERVER = null;
+    public static ServerConfig CONFIG_SERVER = null;
+    private static ForgeConfigSpec CONFIG_SPEC_COMMON = null;
+    public static CommonConfig CONFIG_COMMON = null;
 
     public static final BooleanSupplier ALWAYS_TRUE_SUPPLIER = SleepingOverhaul::alwaysTrue;
+
+    public static long timelapseEnd = -1;
+    // these are used for logging only
+    private static long timelapseStartNanos = 0;
+    private static long timelapseTickCount = 0;
 
     /*
     // We can use this if we don't want to use DeferredRegister
@@ -44,14 +51,14 @@ public class SleepingOverhaul {
     // Registering a new creative tab
     public static final CreativeModeTab EXAMPLE_TAB = CreativeTabRegistry.create(new ResourceLocation(MOD_ID, "example_tab"), () ->
             new ItemStack(SleepingOverhaul.EXAMPLE_ITEM.get()));
-    
+
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(MOD_ID, Registry.ITEM_REGISTRY);
     public static final RegistrySupplier<Item> EXAMPLE_ITEM = ITEMS.register("example_item", () ->
             new Item(new Item.Properties().tab(SleepingOverhaul.EXAMPLE_TAB)));
-    
+
     public static void init() {
         ITEMS.register();
-        
+
         System.out.println(ExampleExpectPlatform.getConfigDirectory().toAbsolutePath().normalize().toString());
     }
 
@@ -113,5 +120,25 @@ public class SleepingOverhaul {
 
     private static boolean alwaysTrue() {
         return true;
+    }
+
+    public static void onTimelapseStart() {
+        if (CONFIG_SERVER.logTimelapsePerformanceStats.get()) {
+            timelapseStartNanos = Util.getNanos();
+            timelapseTickCount = 0;
+        }
+    }
+
+    public static void onTimelapseEnd() {
+        if (CONFIG_SERVER.logTimelapsePerformanceStats.get()) {
+            final double timelapseSeconds = (Util.getNanos() - timelapseStartNanos) / 1000000.0 / 1000.0;
+            final double ticksPerSecond = timelapseTickCount / timelapseSeconds;
+            LOGGER.info("Timelapse finished. Average TPS = " + ticksPerSecond + "; total time = " + timelapseSeconds + " seconds; total ticks = " + timelapseTickCount);
+        }
+    }
+
+    public static void onServerTickPost() {
+        if ((timelapseEnd > 0) && CONFIG_SERVER.logTimelapsePerformanceStats.get())
+            timelapseTickCount++;
     }
 }
