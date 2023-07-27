@@ -1,11 +1,13 @@
-package com.cosmicdan.sleepingoverhaul.mixin.injection;
+package com.cosmicdan.sleepingoverhaul.mixin.injection.client;
 
+import com.cosmicdan.sleepingoverhaul.IClientState;
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
-import com.cosmicdan.sleepingoverhaul.mixin.proxy.InBedChatScreenProxy;
+import com.cosmicdan.sleepingoverhaul.server.ServerState;
 import dev.architectury.networking.NetworkManager;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -23,30 +25,32 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /**
  * Modifications to the in-bed chat screen:
  *  - Adds a "Sleep" button next to "Leave Bed", if configured
- *  - Actiates "Sleep" if player presses ENTER with no text, if configured.
+ *  - Activates "Sleep" if player presses ENTER with no text, if configured.
  *
  * @author Daniel 'CosmicDan' Connolly
  */
+@SuppressWarnings("MethodMayBeStatic")
 @Environment(EnvType.CLIENT)
 @Mixin(InBedChatScreen.class)
-public abstract class InBedChatScreenMixin extends ChatScreen implements InBedChatScreenProxy {
-    public InBedChatScreenMixin(final String string) {
+public abstract class InBedChatScreenMixin extends ChatScreen {
+    protected InBedChatScreenMixin(final String string) {
         super(string);
     }
 
     //INVOKEVIRTUAL net/minecraft/client/gui/components/EditBox.setValue (Ljava/lang/String;)V
     @Redirect(method = "keyPressed(III)Z", at = @At(value = "INVOKE", target = "net/minecraft/client/gui/components/EditBox.setValue (Ljava/lang/String;)V"))
     public final void onChatEnterPressed(final EditBox self, final String emptyString) {
-        if (SleepingOverhaul.CONFIG_SERVER.bedRestOnEnter.get()) {
-            if (SleepingOverhaul.CLIENT_STATE.isSleepButtonActive()) {
+        if (SleepingOverhaul.serverConfig.bedRestOnEnter.get()) {
+            if (SleepingOverhaul.clientState.isSleepButtonActive()) {
                 if (input.getValue().isEmpty()) {
                     // try to sleep if ENTER was pressed and there was no input (not just whitespace)
-                    onClickSleep(minecraft.level);
+                    if (minecraft != null)
+                        onClickSleep(minecraft.level);
                 }
             }
         }
         // perform original logic (clear the text input of chat box)
-        self.setValue(emptyString);
+        input.setValue(emptyString);
     }
 
     // INVOKEVIRTUAL net/minecraft/client/gui/screens/InBedChatScreen.addRenderableWidget (Lnet/minecraft/client/gui/components/events/GuiEventListener;)Lnet/minecraft/client/gui/components/events/GuiEventListener;
@@ -55,8 +59,8 @@ public abstract class InBedChatScreenMixin extends ChatScreen implements InBedCh
             at = @At(value = "INVOKE", target = "net/minecraft/client/gui/screens/InBedChatScreen.addRenderableWidget (Lnet/minecraft/client/gui/components/events/GuiEventListener;)Lnet/minecraft/client/gui/components/events/GuiEventListener;"))
     public final GuiEventListener onInitAddWidget(final InBedChatScreen self, final GuiEventListener guiEventListener) {
         if (guiEventListener instanceof Button buttonLeave) {
-            if (SleepingOverhaul.CLIENT_STATE.getTimelapseCinematicStage() == 0) {
-                if (SleepingOverhaul.CONFIG_SERVER.bedRestEnabled.get()) {
+            if (SleepingOverhaul.clientState.getTimelapseCinematicStage() == 0) {
+                if (SleepingOverhaul.serverConfig.bedRestEnabled.get()) {
                     // reduce buttonLeave width and move 5px left
                     buttonLeave.setWidth(100);
                     buttonLeave.x -= 5;
@@ -64,13 +68,13 @@ public abstract class InBedChatScreenMixin extends ChatScreen implements InBedCh
 
                     final Button sleepButton = new Button((width / 2) + 5, buttonLeave.y, 100, 20,
                             new TranslatableComponent("gui.sleepingoverhaul.sleepButton"),
-                            (Button button) -> onClickSleep(minecraft.level)
+                            (Button button) -> onClickSleep(Minecraft.getInstance().level)
                     );
                     addRenderableWidget(sleepButton);
-                    SleepingOverhaul.CLIENT_STATE.sleepButtonAssign(sleepButton);
+                    SleepingOverhaul.clientState.sleepButtonAssign(sleepButton);
                 }
                 // keep a reference to buttonLeave
-                SleepingOverhaul.CLIENT_STATE.leaveBedButtonAssign(buttonLeave);
+                SleepingOverhaul.clientState.leaveBedButtonAssign(buttonLeave);
             } else {
                 // timelapse is active; don't add sleep button
                 // additionally rather than returing null, we will just set buttonLeave to invisible to be safe
@@ -87,21 +91,16 @@ public abstract class InBedChatScreenMixin extends ChatScreen implements InBedCh
             at = @At("HEAD"),
             cancellable = true
     )
-    public final void onSendWakeup(final CallbackInfo ci) {
-        if (SleepingOverhaul.CLIENT_STATE.getTimelapseCinematicStage() != 0)
+    private void onSendWakeup(final CallbackInfo ci) {
+        if (SleepingOverhaul.clientState.getTimelapseCinematicStage() != 0)
             ci.cancel(); // cancel sending wake packets if timelapse is active
     }
 
     private void onClickSleep(final Level level) {
-        SleepingOverhaul.CLIENT_STATE.sleepButtonDisable();
+        SleepingOverhaul.clientState.sleepButtonDisable();
         final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeBoolean(true);
-        NetworkManager.sendToServer(SleepingOverhaul.PACKET_REALLY_SLEEPING, buf);
-    }
-
-    @Override
-    public EditBox getInput() {
-        return input;
+        NetworkManager.sendToServer(ServerState.PACKET_REALLY_SLEEPING, buf);
     }
 
 }

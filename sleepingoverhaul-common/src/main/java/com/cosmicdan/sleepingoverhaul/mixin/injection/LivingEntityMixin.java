@@ -20,7 +20,7 @@ public abstract class LivingEntityMixin {
             cancellable = true
     )
     public void onTravel(Vec3 vec3, CallbackInfo ci) {
-        if (SleepingOverhaul.CONFIG_SERVER.disableLivingEntityTravel.get() && (SleepingOverhaul.timelapseEnd > 0))
+        if (SleepingOverhaul.serverState.shouldPreventLivingTravel())
             ci.cancel();
     }
 }

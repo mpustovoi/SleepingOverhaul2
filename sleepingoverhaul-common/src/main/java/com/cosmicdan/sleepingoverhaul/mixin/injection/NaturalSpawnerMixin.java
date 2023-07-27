@@ -21,7 +21,7 @@ public abstract class NaturalSpawnerMixin {
             cancellable = true
     )
     private static void onSpawnForChunk(ServerLevel serverLevel, LevelChunk levelChunk, NaturalSpawner.SpawnState spawnState, boolean bl, boolean bl2, boolean bl3, CallbackInfo ci) {
-        if (SleepingOverhaul.CONFIG_SERVER.disableNaturalSpawning.get() && (SleepingOverhaul.timelapseEnd > 0))
+        if (SleepingOverhaul.serverConfig.disableNaturalSpawning.get() && (SleepingOverhaul.serverState.timelapsePending()))
             ci.cancel();
     }
 }

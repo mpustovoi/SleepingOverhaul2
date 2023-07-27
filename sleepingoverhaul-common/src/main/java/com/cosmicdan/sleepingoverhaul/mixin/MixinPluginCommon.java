@@ -24,8 +24,8 @@ public class MixinPluginCommon implements IMixinConfigPlugin {
             "NaturalSpawnerMixin",
     };
     private static final String[] MIXINS_CLIENT_ONLY = {
-            "InBedChatScreenMixin",
-            "CameraMixin",
+            "client/InBedChatScreenMixin",
+            "client/CameraMixin",
     };
     private static final String[] MIXINS_SERVER_ONLY = {
 

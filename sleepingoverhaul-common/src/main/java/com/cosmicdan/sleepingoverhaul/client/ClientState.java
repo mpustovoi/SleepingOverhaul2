@@ -1,9 +1,15 @@
 package com.cosmicdan.sleepingoverhaul.client;
 
 import com.cosmicdan.sleepingoverhaul.IClientState;
+import dev.architectury.networking.NetworkManager;
+import dev.architectury.networking.NetworkManager.PacketContext;
+import dev.architectury.networking.NetworkManager.Side;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.InBedChatScreen;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Player.BedSleepingProblem;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,6 +27,22 @@ public class ClientState implements IClientState {
      * 3 = Ended
      */
     private int timelapseCinematicStage = 0;
+
+    public ClientState() {
+        NetworkManager.registerReceiver(Side.S2C, IClientState.PACKET_SLEEPERROR_TIME, this::recvSleepErrorTime);
+        NetworkManager.registerReceiver(Side.S2C, IClientState.PACKET_TIMELAPSE_CHANGE, this::recvTimelapseChange);
+    }
+
+    private void recvSleepErrorTime(final FriendlyByteBuf buf, final PacketContext context) {
+        context.getPlayer().displayClientMessage(BedSleepingProblem.NOT_POSSIBLE_NOW.getMessage(), true);
+        doSleepButtonCooldown();
+    }
+
+    private void recvTimelapseChange(final FriendlyByteBuf buf, final PacketContext context) {
+        //final Player player = context.getPlayer();
+        final boolean timelapseEnabled = buf.readBoolean();
+        setTimelapseEnabled(timelapseEnabled);
+    }
 
     @Override
     public boolean isSleepButtonActive() {

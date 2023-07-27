@@ -1,5 +1,6 @@
 package com.cosmicdan.sleepingoverhaul.forge;
 
+import com.cosmicdan.sleepingoverhaul.server.ServerConfig;
 import dev.architectury.platform.forge.EventBuses;
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
 import net.minecraftforge.common.MinecraftForge;
@@ -12,10 +13,12 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(SleepingOverhaul.MOD_ID)
 public class SleepingOverhaulForge {
+    private final SleepingOverhaul INSTANCE;
+
     public SleepingOverhaulForge() {
         // Submit our event bus to let architectury register our content on the right time
         EventBuses.registerModEventBus(SleepingOverhaul.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
-        SleepingOverhaul.init();
+        INSTANCE = new SleepingOverhaul();
 
         // register Forge-specific events
         MinecraftForge.EVENT_BUS.register(this);
@@ -27,13 +30,13 @@ public class SleepingOverhaulForge {
      */
     @SubscribeEvent
     public void onSleepingTimeCheck(final SleepingTimeCheckEvent event) {
-        if (SleepingOverhaul.CONFIG_SERVER.bedRestEnabled.get())
+        if (SleepingOverhaul.serverConfig.bedRestEnabled.get())
             event.setResult(Result.ALLOW);
     }
 
     @SubscribeEvent
     public void onServerTick(final TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END)
-            SleepingOverhaul.onServerTickPost();
+            SleepingOverhaul.serverState.onServerTickPost();
     }
 }

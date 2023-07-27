@@ -1,11 +1,9 @@
 package com.cosmicdan.sleepingoverhaul.mixin.injection;
 
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
+import com.cosmicdan.sleepingoverhaul.server.ServerState;
 import com.mojang.logging.LogUtils;
-import dev.architectury.networking.NetworkManager;
-import io.netty.buffer.Unpooled;
 import net.minecraft.core.Holder;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -57,22 +55,16 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
     private boolean onGetBooleanGamerule(final GameRules gameRules, final GameRules.Key<GameRules.BooleanValue> key) {
         if (key.equals(GameRules.RULE_DAYLIGHT)) {
             if (gameRules.getBoolean(key)) {
-                switch (SleepingOverhaul.CONFIG_SERVER.sleepAction.get()) {
+                switch (SleepingOverhaul.serverConfig.sleepAction.get()) {
                     case Timelapse -> {
-                        if (SleepingOverhaul.timelapseEnd == -1) {
-                            SleepingOverhaul.timelapseEnd = getNextMorning();
-                            notifyPlayersTimelapseChange(true);
-                            SleepingOverhaul.onTimelapseStart();
-                        } else if (SleepingOverhaul.timelapseEnd == -2) {
-                            SleepingOverhaul.timelapseEnd = -1;
+                        final boolean timelapseStopped = !SleepingOverhaul.serverState.tickTimelapse(getLevel());
+                        if (timelapseStopped) {
                             wakeUpAllPlayers();
                             resetWeatherCycleIfNeeded();
-                            notifyPlayersTimelapseChange(false);
-                            SleepingOverhaul.onTimelapseEnd();
                         }
                     }
                     case SkipToDay -> {
-                        setDayTime(getNextMorning());
+                        setDayTime(ServerState.getNextMorning(getLevel()));
                         wakeUpAllPlayers();
                         resetWeatherCycleIfNeeded();
                     }
@@ -87,14 +79,8 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
         }
     }
 
-    private void notifyPlayersTimelapseChange(final boolean timelapseActive) {
-        final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        buf.writeBoolean(timelapseActive);
-        NetworkManager.sendToPlayers(players, SleepingOverhaul.PACKET_TIMELAPSE_CHANGE, buf);
-    }
-
     private void resetWeatherCycleIfNeeded() {
-        if (getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE) && isRaining() && SleepingOverhaul.CONFIG_SERVER.morningResetWeather.get())
+        if (getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE) && isRaining() && SleepingOverhaul.serverConfig.morningResetWeather.get())
             resetWeatherCycle();
     }
 
@@ -104,7 +90,7 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
     )
     private boolean onGetBooleanGameruleTwo(final GameRules gameRules, final GameRules.Key<GameRules.BooleanValue> key) {
         if (key.equals(GameRules.RULE_WEATHER_CYCLE)) {
-            return SleepingOverhaul.CONFIG_SERVER.morningResetWeather.get();
+            return SleepingOverhaul.serverConfig.morningResetWeather.get();
         } else {
             throw new RuntimeException("Unexpected Minecraft code; the second GameRules.getBoolean call was not RULE_WEATHER_CYCLE! Mod conflict...?");
         }
@@ -114,28 +100,7 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
             method = "tick(Ljava/util/function/BooleanSupplier;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;updateSkyBrightness()V"))
     private void onUpdateSkyBrightness(BooleanSupplier booleanSupplier, CallbackInfo ci) {
-        //System.out.println(getDayTime() + ">=" + SleepingOverhaul.timelapseEnd);
-        if (SleepingOverhaul.timelapseEnd > 0) {
-            // timelapse is currently active
-            if (getDayTime() >= SleepingOverhaul.timelapseEnd) {
-                SleepingOverhaul.timelapseEnd = -2;
-            }
-        }
-
-
-    }
-
-    private long getNextMorning() {
-        final long oneDayAhead = levelData.getDayTime() + TICKS_PER_DAY;
-        final long nextMorning = oneDayAhead - (oneDayAhead % TICKS_PER_DAY); // next multiple of 24000 = 06:00
-        // calculate the tick offset according to config
-        /*
-        final int nextMorningHourOffset = (-6 + SleepingOverhaul.CONFIG_SERVER.morningHour.get()) * 1000;
-        final int nextMorningMinuteOffset = Math.round(SleepingOverhaul.CONFIG_SERVER.morningMinute.get() * (1000 / 60.0f));
-        final int nextMorningOffset = nextMorningHourOffset + nextMorningMinuteOffset;
-        return nextMorning + nextMorningOffset;
-         */
-        return nextMorning;
+        SleepingOverhaul.serverState.onBeforeTickTime(getLevel());
     }
 
     // INVOKEVIRTUAL net/minecraft/server/level/ServerLevel.wakeUpAllPlayers ()V
@@ -166,6 +131,8 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
     EntityTickList entityTickList;
 
     @Shadow @Final private List<ServerPlayer> players;
+
+    @Shadow public abstract ServerLevel getLevel();
 
     // GETFIELD net/minecraft/server/level/ServerLevel.entityTickList : Lnet/minecraft/world/level/entity/EntityTickList;
     @Redirect(

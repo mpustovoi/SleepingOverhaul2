@@ -1,12 +1,11 @@
-package com.cosmicdan.sleepingoverhaul.mixin.injection;
+package com.cosmicdan.sleepingoverhaul.mixin.injection.client;
 
+import com.cosmicdan.sleepingoverhaul.IClientState;
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
-import com.mojang.authlib.minecraft.client.MinecraftClient;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,15 +29,16 @@ public abstract class CameraMixin {
 
     @Shadow public abstract BlockPos getBlockPosition();
 
+    @SuppressWarnings("MethodWithTooManyParameters")
     @Inject(
             method = "setup",
             at = @At("TAIL"))
-    private void afterCameraSetup(BlockGetter levelIn, Entity cameraEntity, boolean isThirdPerson, boolean isMirrored, float partialTicks, CallbackInfo ci) {
+    private void afterCameraSetup(final BlockGetter levelIn, final Entity cameraEntity, final boolean isThirdPerson, final boolean isMirrored, final float partialTicks, final CallbackInfo ci) {
         //System.out.println(cameraEntity.getYRot();
-        final int cineStage = SleepingOverhaul.CLIENT_STATE.getTimelapseCinematicStage();
+        final int cineStage = SleepingOverhaul.clientState.getTimelapseCinematicStage();
         if (cineStage == 1) {
             // just skip to next cine stage for now
-            SleepingOverhaul.CLIENT_STATE.advanceTimelapseCinematicStage();
+            SleepingOverhaul.clientState.advanceTimelapseCinematicStage();
         } else if (cineStage == 2) {
             if (levelIn instanceof ClientLevel level) {
                 // level.getSunAngle is weird, so we calculate it ourselves
@@ -61,7 +61,7 @@ public abstract class CameraMixin {
             // timelapse was playing but is now ended
             Minecraft.getInstance().gameRenderer.setPanoramicMode(false);
             // just go back to stopped cine stage for now
-            SleepingOverhaul.CLIENT_STATE.advanceTimelapseCinematicStage();
+            SleepingOverhaul.clientState.advanceTimelapseCinematicStage();
         }
     }
 }

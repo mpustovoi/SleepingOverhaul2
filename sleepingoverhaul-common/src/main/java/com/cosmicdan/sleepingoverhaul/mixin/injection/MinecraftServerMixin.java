@@ -15,6 +15,8 @@ import java.util.function.BooleanSupplier;
  */
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin {
+    private final BooleanSupplier alwaysTrueSupplier = MinecraftServerMixin::isTrue;
+
     @Shadow public abstract void tickServer(BooleanSupplier booleanSupplier);
 
     @Shadow protected abstract boolean haveTime();
@@ -24,12 +26,16 @@ public abstract class MinecraftServerMixin {
             at = @At(value = "INVOKE", target = "net/minecraft/server/MinecraftServer.tickServer (Ljava/util/function/BooleanSupplier;)V")
     )
     private void onCallTickServer(MinecraftServer self, BooleanSupplier haveTimeSupplier) {
-        if (SleepingOverhaul.timelapseEnd > 0) {
+        if (SleepingOverhaul.serverState.timelapsePending()) {
             while(haveTime()) {
-                tickServer(SleepingOverhaul.ALWAYS_TRUE_SUPPLIER);
+                tickServer(alwaysTrueSupplier);
             }
         } else {
             tickServer(haveTimeSupplier);
         }
+    }
+
+    private static boolean isTrue() {
+        return true;
     }
 }
