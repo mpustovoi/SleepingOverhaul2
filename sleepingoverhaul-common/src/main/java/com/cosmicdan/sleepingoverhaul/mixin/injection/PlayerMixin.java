@@ -27,10 +27,12 @@ public abstract class PlayerMixin extends LivingEntity implements PlayerMixinPro
 
     @Redirect(method = "tick()V", at = @At(value = "INVOKE", ordinal = 0, target = "net/minecraft/world/entity/player/Player.isSleeping ()Z"))
     private boolean isSleepingCheck(final Player player) {
+        final boolean isInBed = isSleeping();
+        SleepingOverhaul.clientState.onSleepingCheck(isInBed);
         if (SleepingOverhaul.serverConfig.bedRestEnabled.get())
-            return isSleeping() && reallySleeping; // only do reallySleeping check if bed rest is actually enabled
+            return isInBed && reallySleeping; // only do reallySleeping check if bed rest is actually enabled
         else
-            return isSleeping();
+            return isInBed;
     }
 
     @Inject(at = @At("TAIL"), method = "stopSleepInBed(ZZ)V")

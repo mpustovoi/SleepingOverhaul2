@@ -26,4 +26,6 @@ public interface IClientState {
     void advanceTimelapseCinematicStage();
 
     void removeBedScreenButtons();
+
+    void onSleepingCheck(boolean isInBed);
 }

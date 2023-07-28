@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.InBedChatScreen;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Player.BedSleepingProblem;
 
 import java.util.Timer;
@@ -126,5 +125,12 @@ public class ClientState implements IClientState {
             leaveButton.visible = false;
         if (sleepButton != null)
             sleepButton.visible = false;
+    }
+
+    @Override
+    public void onSleepingCheck(final boolean isInBed) {
+        // if player is not in bed, ensure cinematic is not active
+        if (!isInBed && (timelapseCinematicStage != 0))
+            timelapseCinematicStage = 0;
     }
 }

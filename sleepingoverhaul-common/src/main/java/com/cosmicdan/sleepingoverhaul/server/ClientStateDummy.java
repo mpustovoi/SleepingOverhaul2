@@ -39,4 +39,7 @@ public class ClientStateDummy implements IClientState {
 
     @Override
     public void removeBedScreenButtons() {}
+
+    @Override
+    public void onSleepingCheck(boolean isInBed) {}
 }
