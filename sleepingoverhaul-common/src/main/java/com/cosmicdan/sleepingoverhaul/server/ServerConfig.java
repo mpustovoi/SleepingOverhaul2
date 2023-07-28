@@ -21,6 +21,10 @@ public class ServerConfig {
     private static final String morningResetWeatherTxt = " Reset the weather on morning (when players wake) if raining.";
 
     private static final String sectionTimelapse = "timelapse";
+    public final ForgeConfigSpec.EnumValue<AttackedWhileSleepingAction> sleepAttackedAction;
+    private static final String sleepAttackedActionTxt = " The action to perform on a player if they are attacked during timelapse sleep";
+    public final ForgeConfigSpec.BooleanValue sleepPreventMagicDamage;
+    private static final String sleepPreventMagicDamageTxt = " If true, magic damage (e.g. poison) will NOT apply to players during timelapse";
     public final ForgeConfigSpec.BooleanValue logTimelapsePerformanceStats;
     private static final String logTimelapsePerformanceStatsTxt = " If true, will performance stats will be logged on timelapse end (average TPS, total time, total ticks)";
     public final ForgeConfigSpec.BooleanValue disableNaturalSpawning;
@@ -53,7 +57,6 @@ public class ServerConfig {
                 .comment(sleepActionTxt)
                 //.translation("config.sleepingoverhaul.sleepAction") // TODO: what's the point of translation if only comment is used?
                 .defineEnum("sleepAction", SleepAction.Timelapse);
-
         builder.pop();
 
         builder.push(sectionMorning);
@@ -73,6 +76,12 @@ public class ServerConfig {
 
 
         builder.push(sectionTimelapse);
+        sleepAttackedAction = builder
+                .comment(sleepAttackedActionTxt)
+                .defineEnum("sleepAttackedAction", AttackedWhileSleepingAction.NoChange);
+        sleepPreventMagicDamage = builder
+                .comment(sleepPreventMagicDamageTxt)
+                .define("sleepPreventMagicDamage", false);
         logTimelapsePerformanceStats = builder
                 .comment(logTimelapsePerformanceStatsTxt)
                 .define("logTimelapsePerformanceStats", true);
@@ -106,5 +115,11 @@ public class ServerConfig {
         Timelapse,
         SkipToDay,
         Nothing
+    }
+
+    public enum AttackedWhileSleepingAction {
+        NoChange,
+        InstantKill,
+        Invincible
     }
 }

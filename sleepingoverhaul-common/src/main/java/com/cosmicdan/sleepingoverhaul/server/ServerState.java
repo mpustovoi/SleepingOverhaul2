@@ -2,6 +2,7 @@ package com.cosmicdan.sleepingoverhaul.server;
 
 import com.cosmicdan.sleepingoverhaul.IClientState;
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
+import com.cosmicdan.sleepingoverhaul.mixin.injection.ServerPlayerMixin;
 import com.cosmicdan.sleepingoverhaul.mixin.proxy.PlayerMixinProxy;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.networking.NetworkManager.Side;
@@ -11,6 +12,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -55,17 +57,16 @@ public class ServerState {
         boolean timelapseActive = true;
         if (timelapseEnd == -1) {
             // timelapse has just started
+            notifyPlayersTimelapseChange(level.players(), true);
             timelapseEnd = getNextMorning(level);
             onTimelapseStart();
         } else if (timelapseEnd == -2) {
             // timelapse has reached its target tick
             timelapseActive = false;
+            notifyPlayersTimelapseChange(level.players(), false);
             timelapseEnd = -1;
             onTimelapseEnd();
         }
-
-        if (timelapseEnd < 0) // only send change packet on start/stop
-            notifyPlayersTimelapseChange(level.players(), timelapseActive);
 
         return timelapseActive;
     }
@@ -122,5 +123,22 @@ public class ServerState {
 
     public boolean timelapsePending() {
         return timelapseEnd > 0;
+    }
+
+    public float onPlayerHurt(ServerPlayer player, DamageSource source, float amount) {
+        float amountAdjusted = amount;
+        if (timelapsePending()) {
+            // timelapse active and player was attacked
+            if (SleepingOverhaul.serverConfig.sleepPreventMagicDamage.get() && source.isMagic())
+                amountAdjusted = 0.0f; // remove magic damage if configured
+            else {
+                switch (SleepingOverhaul.serverConfig.sleepAttackedAction.get()) {
+                    case NoChange -> {}
+                    case InstantKill -> amountAdjusted = Float.MAX_VALUE;
+                    case Invincible -> amountAdjusted = 0.0f;
+                }
+            }
+        }
+        return amountAdjusted;
     }
 }

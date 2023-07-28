@@ -3,8 +3,11 @@ package com.cosmicdan.sleepingoverhaul.forge;
 import com.cosmicdan.sleepingoverhaul.server.ServerConfig;
 import dev.architectury.platform.forge.EventBuses;
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -38,5 +41,17 @@ public class SleepingOverhaulForge {
     public void onServerTick(final TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END)
             SleepingOverhaul.serverState.onServerTickPost();
+    }
+
+    @SubscribeEvent
+    public void onLivingHurt(final LivingHurtEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            final float adjustedDamage = SleepingOverhaul.serverState.onPlayerHurt(player, event.getSource(), event.getAmount());
+            if (adjustedDamage > 0.0)
+                event.setAmount(adjustedDamage);
+            else
+                event.setCanceled(true);
+
+        }
     }
 }
