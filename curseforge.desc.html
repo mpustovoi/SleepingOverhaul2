@@ -10,7 +10,16 @@
 <br/>
 <h2>📜 Changelogs (Update history)</h2></br>
 <br/>
-<p>Nothing yet, this is the initial release :)</p>
+<div class="spoiler"><p>
+<h5>2.0.1</h5>
+ - Add some new timelapse-related config: "sleepAttackedAction" and "sleepPreventMagicDamage"<br/>
+ - Fixed timelapse cinematic camera being left on in some cases (e.g. player dies while sleeping)<br/>
+ - Simplified the timelapse cinematic<br/>
+ - Misc. code optimizations to make future work easier<br/>
+<br/>
+<h5>2.0.0</h5>
+ - Initial release of Sleeping Overhaul 2<br/>
+</p></div><br/>
 <br/>
 <br/>
 <br/>
@@ -43,6 +52,11 @@
  - Reset the weather on morning (when players wake) if raining. Default true (same as vanilla).<br/>
 <br/>
 <h4>[timelapse]</h4>
+<h5>sleepAttackedAction</h5>
+ - The action to perform on a player if they are attacked during timelapse sleep<br/>
+ - Can be "NoChange" (default), "InstantKill" or "Invincible"<br/>
+<h5>sleepPreventMagicDamage</h5>
+ - If true (NOT default), magic damage (e.g. poison) will not apply to players during timelapse.<br/>
 <h5>logTimelapsePerformanceStats:</h5>
  - If true (default), will performance stats will be logged on timelapse end.<br/>
  - Shows average TPS, total time and total ticks.<br/>
@@ -98,3 +112,8 @@
 <br/>
 <p><strong>Q. <em>Can I use this in my modpack?</em></strong></p>
 <p>A. Of course! As long as you consider reporting any mod compatibility issues, and feature/config requests too 😁</p>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
