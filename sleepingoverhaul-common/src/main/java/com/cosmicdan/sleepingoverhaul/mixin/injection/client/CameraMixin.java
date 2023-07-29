@@ -8,6 +8,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,6 +31,8 @@ public abstract class CameraMixin {
 
     @Shadow public abstract BlockPos getBlockPosition();
 
+    @Shadow protected abstract void setPosition(Vec3 vec3);
+
     @SuppressWarnings("MethodWithTooManyParameters")
     @Inject(
             method = "setup",
@@ -45,6 +49,9 @@ public abstract class CameraMixin {
                 final float timeOfDayAsFraction = (level.getDayTime() % 24000L) / 24000.0f;
                 // rotate first
                 setRotation((timeOfDayAsFraction * 360.0f * 2.0f) - 90, 0.0f);
+
+                // OLD: Results in weird collision stuff
+                /*
                 // move camera back and up
                 move(-6.0, 2.0, 0.0);
                 int moveCounter = 0;
@@ -54,6 +61,12 @@ public abstract class CameraMixin {
                         break;
                     moveCounter++;
                 }
+                 */
+
+                // NEW: just rotate cam from the topmost block, no orbit
+                final BlockPos topmostPosition = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, getBlockPosition()).above(3);
+                setPosition(new Vec3(topmostPosition.getX(), topmostPosition.getY(), topmostPosition.getZ()));
+
                 // finally set FoV 90
                 Minecraft.getInstance().gameRenderer.setPanoramicMode(true);
             }
