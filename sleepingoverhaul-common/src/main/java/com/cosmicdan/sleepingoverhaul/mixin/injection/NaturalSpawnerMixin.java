@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /**
  * @author Daniel 'CosmicDan' Connolly
  */
+@SuppressWarnings("MethodWithTooManyParameters")
 @Mixin(NaturalSpawner.class)
 public abstract class NaturalSpawnerMixin {
     // spawnForChunk(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/level/chunk/LevelChunk;Lnet/minecraft/world/level/NaturalSpawner$SpawnState;ZZZ)V

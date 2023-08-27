@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /**
  * @author Daniel 'CosmicDan' Connolly
  */
+@SuppressWarnings("MethodMayBeStatic")
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
 
@@ -19,7 +20,7 @@ public abstract class LivingEntityMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    public void onTravel(Vec3 vec3, CallbackInfo ci) {
+    public final void onTravel(Vec3 vec3, CallbackInfo ci) {
         if (SleepingOverhaul.serverState.shouldPreventLivingTravel())
             ci.cancel();
     }

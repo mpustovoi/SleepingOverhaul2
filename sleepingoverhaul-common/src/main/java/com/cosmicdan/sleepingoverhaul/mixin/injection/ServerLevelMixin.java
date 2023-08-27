@@ -37,6 +37,7 @@ import java.util.function.Supplier;
  *
  * @author Daniel 'CosmicDan' Connolly
  */
+@SuppressWarnings("MethodMayBeStatic")
 @Mixin(ServerLevel.class)
 public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
     @Shadow protected abstract void wakeUpAllPlayers();
@@ -52,7 +53,7 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
             method = "tick(Ljava/util/function/BooleanSupplier;)V",
             at = @At(value = "INVOKE", target = "net/minecraft/world/level/GameRules.getBoolean (Lnet/minecraft/world/level/GameRules$Key;)Z", ordinal = 0)
     )
-    private boolean onGetBooleanGamerule(final GameRules gameRules, final GameRules.Key<GameRules.BooleanValue> key) {
+    private boolean shouldGetBooleanGameRuleFirst(final GameRules gameRules, final GameRules.Key<GameRules.BooleanValue> key) {
         if (key.equals(GameRules.RULE_DAYLIGHT)) {
             if (gameRules.getBoolean(key)) {
                 switch (SleepingOverhaul.serverConfig.sleepAction.get()) {
@@ -88,7 +89,7 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
             method = "tick(Ljava/util/function/BooleanSupplier;)V",
             at = @At(value = "INVOKE", target = "net/minecraft/world/level/GameRules.getBoolean (Lnet/minecraft/world/level/GameRules$Key;)Z", ordinal = 1)
     )
-    private boolean onGetBooleanGameruleTwo(final GameRules gameRules, final GameRules.Key<GameRules.BooleanValue> key) {
+    private boolean shouldGetBooleanGameRuleSecond(final GameRules gameRules, final GameRules.Key<GameRules.BooleanValue> key) {
         if (key.equals(GameRules.RULE_WEATHER_CYCLE)) {
             return SleepingOverhaul.serverConfig.morningResetWeather.get();
         } else {
@@ -110,6 +111,7 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
     )
     private void onWakeUpAllPlayers(ServerLevel self) {
         // Do nothing always, we wake players ourselves at the appropriate time
+        return;
     }
 
     // INVOKEVIRTUAL net/minecraft/server/level/ServerLevel.resetWeatherCycle ()V
@@ -119,6 +121,7 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
     )
     private void onResetWeatherCycle(ServerLevel self) {
         // Do nothing always, we reset weather ourselves at the appropriate time
+        return;
     }
 
     @Shadow

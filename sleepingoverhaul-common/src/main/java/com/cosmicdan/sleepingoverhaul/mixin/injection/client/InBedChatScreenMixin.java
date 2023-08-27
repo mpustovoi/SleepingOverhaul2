@@ -1,6 +1,5 @@
 package com.cosmicdan.sleepingoverhaul.mixin.injection.client;
 
-import com.cosmicdan.sleepingoverhaul.IClientState;
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
 import com.cosmicdan.sleepingoverhaul.server.ServerState;
 import dev.architectury.networking.NetworkManager;
@@ -54,6 +53,7 @@ public abstract class InBedChatScreenMixin extends ChatScreen {
     }
 
     // INVOKEVIRTUAL net/minecraft/client/gui/screens/InBedChatScreen.addRenderableWidget (Lnet/minecraft/client/gui/components/events/GuiEventListener;)Lnet/minecraft/client/gui/components/events/GuiEventListener;
+    @SuppressWarnings("FeatureEnvy")
     @Redirect(
             method = "init()V",
             at = @At(value = "INVOKE", target = "net/minecraft/client/gui/screens/InBedChatScreen.addRenderableWidget (Lnet/minecraft/client/gui/components/events/GuiEventListener;)Lnet/minecraft/client/gui/components/events/GuiEventListener;"))
@@ -91,7 +91,7 @@ public abstract class InBedChatScreenMixin extends ChatScreen {
             at = @At("HEAD"),
             cancellable = true
     )
-    private void onSendWakeup(final CallbackInfo ci) {
+    public final void onSendWakeup(final CallbackInfo ci) {
         if (SleepingOverhaul.clientState.getTimelapseCinematicStage() != 0)
             ci.cancel(); // cancel sending wake packets if timelapse is active
     }
