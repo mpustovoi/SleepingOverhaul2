@@ -22,8 +22,11 @@ subprojects {
 
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
-        mappings loom.officialMojangMappings()
-        // TODO: ParchmentMC mappings
+        mappings loom.layered() {
+            officialMojangMappings()
+            // Via tags search on MC version at https://github.com/ParchmentMC/Parchment
+            parchment("org.parchmentmc.data:parchment-1.18.2:2022.11.06@zip")
+        }
         
         // TODO: Use this and rewrite mixins to be more compatible
         // https://github.com/LlamaLad7/MixinExtras/wiki
@@ -51,6 +54,10 @@ allprojects {
     repositories {
         maven { url = "https://cursemaven.com" }
         maven { url = "https://jitpack.io" }
+        maven {
+            name = 'ParchmentMC'
+            url = 'https://maven.parchmentmc.org'
+        }
     }
 
     tasks.withType(JavaCompile) {
