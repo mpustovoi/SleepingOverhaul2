@@ -16,7 +16,7 @@ logoFile = "logo.png"
 [[dependencies.sleepingoverhaul]]
 modId = "forge"
 mandatory = true
-versionRange = "[40,)"
+versionRange = "[40.2.10,)"
 ordering = "NONE"
 side = "BOTH"
 
@@ -31,5 +31,6 @@ side = "BOTH"
 modId = "architectury"
 mandatory = true
 versionRange = "[4.11.93,)"
-ordering = "AFTER"
+# An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+ordering = "NONE"
 side = "BOTH"
