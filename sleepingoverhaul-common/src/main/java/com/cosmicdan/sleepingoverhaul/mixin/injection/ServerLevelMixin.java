@@ -40,13 +40,13 @@ import java.util.function.Supplier;
 @SuppressWarnings("MethodMayBeStatic")
 @Mixin(ServerLevel.class)
 public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
-    @Shadow protected abstract void wakeUpAllPlayers();
-
-    private static final Logger LOGGER = LogUtils.getLogger();
-
     protected ServerLevelMixin(WritableLevelData writableLevelData, ResourceKey<Level> resourceKey, Holder<DimensionType> holder, Supplier<ProfilerFiller> supplier, boolean bl, boolean bl2, long l) {
         super(writableLevelData, resourceKey, holder, supplier, bl, bl2, l);
     }
+
+    @Shadow protected abstract void wakeUpAllPlayers();
+
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     // INVOKEVIRTUAL net/minecraft/server/level/ServerLevel.setDayTime (J)V
     @Redirect(
