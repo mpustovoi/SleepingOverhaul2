@@ -85,9 +85,11 @@ public class ClientState implements IClientState {
     @Override
     public void setTimelapseEnabled(final boolean timelapseEnabled) {
         if (timelapseEnabled) {
+            Minecraft.getInstance().gameRenderer.setPanoramicMode(true);
             if (timelapseCinematicStage == 0)
                 timelapseCinematicStage = 1;
         } else {
+            Minecraft.getInstance().gameRenderer.setPanoramicMode(false);
             timelapseCinematicStage = 3;
         }
 

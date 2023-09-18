@@ -38,10 +38,9 @@ public abstract class CameraMixin {
             method = "setup",
             at = @At("TAIL"))
     private void afterCameraSetup(final BlockGetter levelIn, final Entity cameraEntity, final boolean isThirdPerson, final boolean isMirrored, final float partialTicks, final CallbackInfo ci) {
-        //System.out.println(cameraEntity.getYRot();
         final int cineStage = SleepingOverhaul.clientState.getTimelapseCinematicStage();
         if (cineStage == 1) {
-            // just skip to next cine stage for now
+            // just skip to next cine stage for now (only did this for a transition animation originally but meh)
             SleepingOverhaul.clientState.advanceTimelapseCinematicStage();
         } else if (cineStage == 2) {
             if (levelIn instanceof ClientLevel level) {
@@ -66,15 +65,7 @@ public abstract class CameraMixin {
                 // NEW: just rotate cam from the topmost block, no orbit
                 final BlockPos topmostPosition = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, getBlockPosition()).above(3);
                 setPosition(new Vec3(topmostPosition.getX(), topmostPosition.getY(), topmostPosition.getZ()));
-
-                // finally set FoV 90
-                Minecraft.getInstance().gameRenderer.setPanoramicMode(true);
             }
-        } else if (cineStage == 3) {
-            // timelapse was playing but is now ended
-            Minecraft.getInstance().gameRenderer.setPanoramicMode(false);
-            // just go back to stopped cine stage for now
-            SleepingOverhaul.clientState.advanceTimelapseCinematicStage();
         }
     }
 }
