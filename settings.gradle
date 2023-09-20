@@ -11,7 +11,7 @@ pluginManagement {
 include("sleepingoverhaul-common")
 include("sleepingoverhaul-fabric-like")
 include("sleepingoverhaul-fabric")
-include("sleepingoverhaul-quilt")
+//include("sleepingoverhaul-quilt")
 include("sleepingoverhaul-forge")
 
 // Intentionally disabled, do not use if depending on other projects!
