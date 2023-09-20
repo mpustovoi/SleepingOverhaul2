@@ -3,16 +3,16 @@
   "id": "sleepingoverhaul",
   "version": "${version}",
   "name": "SleepingOverhaul",
-  "description": "[TODO]",
+  "description": "Replaces skip-to-day on sleep with a beautiful panoramic timelapse, and more!",
   "authors": [
     "CosmicDan"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://www.cosmicdan.com",
+    "sources": "https://github.com/CosmicDan-Minecraft/SleepingOverhaul2/"
   },
-  "license": "All Rights Reserved",
-  "icon": "assets/sleepingoverhaul/icon.png",
+  "license": "LGPL3",
+  "icon": "logo.png",
   "environment": "*",
   "entrypoints": {
     "main": [

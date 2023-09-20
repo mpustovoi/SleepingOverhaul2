@@ -4,7 +4,7 @@ plugins {
 
 apply from: '../modprops.gradle'
 archivesBaseName = project.archives_base_name
-version = project.mod_version
+version = project.mod_version + "-Quilt-${rootProject.minecraft_version}"
 group = project.maven_group
 
 repositories {

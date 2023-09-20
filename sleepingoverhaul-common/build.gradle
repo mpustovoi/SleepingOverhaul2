@@ -21,9 +21,9 @@ dependencies {
     implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.2.0-rc.3"))
     
     // Forge config API port
-    implementation("com.electronwill.night-config:core:3.6.3")
-    implementation("com.electronwill.night-config:toml:3.6.3")
-    modImplementation("curse.maven:forge-config-api-port-fabric-547434:3943250")
+    implementation 'com.electronwill.night-config:core:3.6.3'
+    implementation 'com.electronwill.night-config:toml:3.6.3'
+    compileOnly "net.minecraftforge:forgeconfigapiport-fabric:3.2.4"
 }
 
 publishing {

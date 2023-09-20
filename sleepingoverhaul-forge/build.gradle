@@ -37,7 +37,7 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
 
-    common(project(path: ":${project.modid}-common", configuration: "namedElements")) { transitive false }
+    common(project(path: ":${project.modid}-common", configuration: "namedElements")) { transitive = false }
     shadowCommon(project(path: ":${project.modid}-common", configuration: "transformProductionForge")) { transitive = false }
     
     implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.2.0-rc.3"))

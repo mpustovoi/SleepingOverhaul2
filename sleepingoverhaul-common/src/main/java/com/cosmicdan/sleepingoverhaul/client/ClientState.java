@@ -102,6 +102,7 @@ public class ClientState implements IClientState {
                     removeBedScreenButtons();
                 } else {
                     // timelapse ended, switch to regular chat screen if there is text still in chat box
+                    // TODO: Apparently this is not needed...? Confirm! Causes crash on 1.20.x IIRC so hopefully can just remove.
                     screenBedChat.onPlayerWokeUp();
                 }
             }

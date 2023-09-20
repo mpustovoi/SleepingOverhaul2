@@ -9,13 +9,14 @@
     "id": "sleepingoverhaul",
     "version": "${version}",
     "name": "SleepingOverhaul",
-    "description": "[TODO]",
+    "description": "Replaces skip-to-day on sleep with a beautiful panoramic timelapse, and more!",
     "authors": ["CosmicDan"],
     "contact": {
-      "sources": "https://github.com/architectury/architectury-templates"
+      "homepage": "https://www.cosmicdan.com",
+      "sources": "https://github.com/CosmicDan-Minecraft/SleepingOverhaul2/"
     },
-    "license": "Insert License Here",
-    "icon": "assets/sleepingoverhaul/icon.png",
+    "license": "LGPL3",
+    "icon": "logo.png",
     "intermediate_mappings": "net.fabricmc:intermediary",
     "environment": "*",
     "entrypoints": {

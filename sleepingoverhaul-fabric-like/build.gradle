@@ -18,6 +18,6 @@ dependencies {
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
     // [CosmicDan] Build fix for Gradle 8 but untested! [check here first if problems come up]
-    //compileClasspath(project(path: ":common", configuration: "namedElements")) { transitive false }
-    compileOnly(project(path: ":${project.modid}-common", configuration: "namedElements")) { transitive false }
+    //compileClasspath(project(path: ":common", configuration: "namedElements")) { transitive = false }
+    compileOnly(project(path: ":${project.modid}-common", configuration: "namedElements")) { transitive = false }
 }

@@ -1,7 +1,7 @@
 modLoader = "javafml"
 loaderVersion = "[40,)"
 #issueTrackerURL = ""
-license = "All Rights Reserved"
+license = "LGPL3"
 
 [[mods]]
 modId = "sleepingoverhaul"
@@ -9,9 +9,10 @@ version = "${version}"
 displayName = "SleepingOverhaul"
 authors = "CosmicDan"
 description = '''
-[TODO]
+Replaces skip-to-day on sleep with a beautiful panoramic timelapse, and more!
 '''
 logoFile = "logo.png"
+displayURL = "https://github.com/CosmicDan-Minecraft/SleepingOverhaul2/"
 
 [[dependencies.sleepingoverhaul]]
 modId = "forge"

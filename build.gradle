@@ -52,6 +52,11 @@ allprojects {
             name = 'ParchmentMC'
             url = 'https://maven.parchmentmc.org'
         }
+        // Forge Config API Port
+        maven {
+            name = "Fuzs Mod Resources"
+            url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
+        }
     }
 
     tasks.withType(JavaCompile) {
