@@ -10,16 +10,19 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
+ * Hook for disabling spawn during timelapse option (for increased timelapse speed)
  * @author Daniel 'CosmicDan' Connolly
  */
 @SuppressWarnings("MethodWithTooManyParameters")
 @Mixin(NaturalSpawner.class)
 public abstract class NaturalSpawnerMixin {
+    // TODO: Fix this, should hook ServerLevel#isNaturalSpawningAllowed instead (both of them). Optimized!
     // spawnForChunk(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/level/chunk/LevelChunk;Lnet/minecraft/world/level/NaturalSpawner$SpawnState;ZZZ)V
     @Inject(
             method = "spawnForChunk(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/level/chunk/LevelChunk;Lnet/minecraft/world/level/NaturalSpawner$SpawnState;ZZZ)V",
             at = @At("HEAD"),
-            cancellable = true
+            cancellable = true,
+            require = 1, allow = 1
     )
     private static void onSpawnForChunk(ServerLevel serverLevel, LevelChunk levelChunk, NaturalSpawner.SpawnState spawnState, boolean bl, boolean bl2, boolean bl3, CallbackInfo ci) {
         if (SleepingOverhaul.serverConfig.disableNaturalSpawning.get() && (SleepingOverhaul.serverState.timelapsePending()))

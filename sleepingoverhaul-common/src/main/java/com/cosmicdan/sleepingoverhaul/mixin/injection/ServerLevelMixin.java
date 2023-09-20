@@ -2,6 +2,8 @@ package com.cosmicdan.sleepingoverhaul.mixin.injection;
 
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
 import com.cosmicdan.sleepingoverhaul.server.ServerState;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
@@ -28,12 +30,13 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 /**
- * Responsible for adjusting the "when all players are asleep" logic on the server.
- *
- * Includes hooks for adjusting:
+ * Various hooks:
+ * - Controlling custom "when all players are asleep" logic
  * - Whether to skip to day or not
- * - Whether to wake all players at the next morning
+ * - Whether to wake all players wake the next morning
  * - Whether to clear weather after skip-to-day
+ *
+ * TODO: Javadoc for each method
  *
  * @author Daniel 'CosmicDan' Connolly
  */
@@ -48,12 +51,12 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    // INVOKEVIRTUAL net/minecraft/server/level/ServerLevel.setDayTime (J)V
-    @Redirect(
+    @WrapOperation(
             method = "tick(Ljava/util/function/BooleanSupplier;)V",
-            at = @At(value = "INVOKE", target = "net/minecraft/world/level/GameRules.getBoolean (Lnet/minecraft/world/level/GameRules$Key;)Z", ordinal = 0)
+            at = @At(value = "INVOKE", ordinal = 0, target = "net/minecraft/world/level/GameRules.getBoolean (Lnet/minecraft/world/level/GameRules$Key;)Z"),
+            require = 1, allow = 1
     )
-    private boolean shouldGetBooleanGameRuleFirst(final GameRules gameRules, final GameRules.Key<GameRules.BooleanValue> key) {
+    public final boolean shouldGetBooleanGameRuleFirst(final GameRules gameRules, final GameRules.Key<GameRules.BooleanValue> key, Operation<Boolean> original) {
         if (key.equals(GameRules.RULE_DAYLIGHT)) {
             if (gameRules.getBoolean(key)) {
                 switch (SleepingOverhaul.serverConfig.sleepAction.get()) {
@@ -80,16 +83,17 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
         }
     }
 
-    private void resetWeatherCycleIfNeeded() {
+    public final void resetWeatherCycleIfNeeded() {
         if (getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE) && isRaining() && SleepingOverhaul.serverConfig.morningResetWeather.get())
             resetWeatherCycle();
     }
 
-    @Redirect(
+    @WrapOperation(
             method = "tick(Ljava/util/function/BooleanSupplier;)V",
-            at = @At(value = "INVOKE", target = "net/minecraft/world/level/GameRules.getBoolean (Lnet/minecraft/world/level/GameRules$Key;)Z", ordinal = 1)
+            at = @At(value = "INVOKE", ordinal = 1, target = "net/minecraft/world/level/GameRules.getBoolean (Lnet/minecraft/world/level/GameRules$Key;)Z"),
+            require = 1, allow = 1
     )
-    private boolean shouldGetBooleanGameRuleSecond(final GameRules gameRules, final GameRules.Key<GameRules.BooleanValue> key) {
+    public final boolean shouldGetBooleanGameRuleSecond(final GameRules gameRules, final GameRules.Key<GameRules.BooleanValue> key, Operation<Boolean> original) {
         if (key.equals(GameRules.RULE_WEATHER_CYCLE)) {
             return SleepingOverhaul.serverConfig.morningResetWeather.get();
         } else {
@@ -99,17 +103,20 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
 
     @Inject(
             method = "tick(Ljava/util/function/BooleanSupplier;)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;updateSkyBrightness()V"))
-    private void onUpdateSkyBrightness(BooleanSupplier booleanSupplier, CallbackInfo ci) {
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;updateSkyBrightness()V"),
+            require = 1, allow = 1
+    )
+    public final void onUpdateSkyBrightness(BooleanSupplier booleanSupplier, CallbackInfo ci) {
         SleepingOverhaul.serverState.onBeforeTickTime(getLevel());
     }
 
     // INVOKEVIRTUAL net/minecraft/server/level/ServerLevel.wakeUpAllPlayers ()V
     @Redirect(
             method = "tick(Ljava/util/function/BooleanSupplier;)V",
-            at = @At(value = "INVOKE", target = "net/minecraft/server/level/ServerLevel.wakeUpAllPlayers ()V")
+            at = @At(value = "INVOKE", target = "net/minecraft/server/level/ServerLevel.wakeUpAllPlayers ()V"),
+            require = 1, allow = 1
     )
-    private void onWakeUpAllPlayers(ServerLevel self) {
+    public final void onWakeUpAllPlayers(ServerLevel self) {
         // Do nothing always, we wake players ourselves at the appropriate time
         return;
     }
@@ -117,9 +124,10 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
     // INVOKEVIRTUAL net/minecraft/server/level/ServerLevel.resetWeatherCycle ()V
     @Redirect(
             method = "tick(Ljava/util/function/BooleanSupplier;)V",
-            at = @At(value = "INVOKE", target = "net/minecraft/server/level/ServerLevel.resetWeatherCycle ()V")
+            at = @At(value = "INVOKE", target = "net/minecraft/server/level/ServerLevel.resetWeatherCycle ()V"),
+            require = 1, allow = 1
     )
-    private void onResetWeatherCycle(ServerLevel self) {
+    public final void onResetWeatherCycle(ServerLevel self) {
         // Do nothing always, we reset weather ourselves at the appropriate time
         return;
     }
@@ -137,6 +145,7 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
 
     @Shadow public abstract ServerLevel getLevel();
 
+    /*
     // GETFIELD net/minecraft/server/level/ServerLevel.entityTickList : Lnet/minecraft/world/level/entity/EntityTickList;
     @Redirect(
             method = "tick(Ljava/util/function/BooleanSupplier;)V",
@@ -146,5 +155,5 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
         // TODO: return an empty list if timelapse active and "skip entity ticks" is configured
         return entityTickList;
     }
-
+    */
 }

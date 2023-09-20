@@ -1,9 +1,7 @@
 package com.cosmicdan.sleepingoverhaul.mixin.injection.client;
 
-import com.cosmicdan.sleepingoverhaul.IClientState;
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
 import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -17,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
+ * Hook for cinematic camera during timelapse option
  * @author Daniel 'CosmicDan' Connolly
  */
 @Mixin(Camera.class)
@@ -36,7 +35,9 @@ public abstract class CameraMixin {
     @SuppressWarnings("MethodWithTooManyParameters")
     @Inject(
             method = "setup",
-            at = @At("TAIL"))
+            at = @At("TAIL"),
+            require = 1, allow = 1
+    )
     private void afterCameraSetup(final BlockGetter levelIn, final Entity cameraEntity, final boolean isThirdPerson, final boolean isMirrored, final float partialTicks, final CallbackInfo ci) {
         final int cineStage = SleepingOverhaul.clientState.getTimelapseCinematicStage();
         if (cineStage == 1) {

@@ -4,7 +4,7 @@ plugins {
 
 apply from: '../modprops.gradle'
 archivesBaseName = project.archives_base_name
-version = project.mod_version + "-forge-${rootProject.minecraft_version}"
+version = project.mod_version + "-Forge-${rootProject.minecraft_version}"
 group = project.maven_group
 
 architectury {
@@ -39,6 +39,9 @@ dependencies {
 
     common(project(path: ":${project.modid}-common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":${project.modid}-common", configuration: "transformProductionForge")) { transitive = false }
+    
+    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.2.0-rc.3"))
+    implementation(include("io.github.llamalad7:mixinextras-forge:0.2.0-rc.3"))
 }
 
 processResources {

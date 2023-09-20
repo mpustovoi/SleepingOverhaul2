@@ -27,12 +27,6 @@ subprojects {
             // Via tags search on MC version at https://github.com/ParchmentMC/Parchment
             parchment("org.parchmentmc.data:parchment-1.18.2:2022.11.06@zip")
         }
-        
-        // TODO: Use this and rewrite mixins to be more compatible
-        // https://github.com/LlamaLad7/MixinExtras/wiki
-        // Of partuclar note is the Share annotation to send variable between methods in one mixin (could be used to optimize Sleep button stuff, i.e. remove the need for ClientState proxy)
-        //implementation("com.github.LlamaLad7:MixinExtras:0.1.1")
-        //annotationProcessor("com.github.LlamaLad7:MixinExtras:0.1.1")
     }
     
     clean.doLast {

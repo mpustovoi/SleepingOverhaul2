@@ -33,8 +33,7 @@ public class ServerConfig {
     public final ForgeConfigSpec.BooleanValue disableLivingEntityTravel;
     private static final String disableLivingEntityTravelTxt = " If true, LivingEntity type mobs will not travel during timelapse. Gives a minor speed boost.\n" +
             " Disabled by default since it could result in undesired loss, e.g. mobs drowning.\n" +
-            " Note that this does NOT seem to include Villager movement.\n" +
-            " Gives a minor speed boost.";
+            " Note that this does NOT seem to include Villager movement.";
     // disabled for now since it needs extra work (prevent wakeup is always-on)
     //public final ForgeConfigSpec.BooleanValue timelapsePreventWakeup;
     //private static final String timelapsePreventWakeupTxt = "Prevents players from waking up during timelapse (players will only wake when morning arrives)";
