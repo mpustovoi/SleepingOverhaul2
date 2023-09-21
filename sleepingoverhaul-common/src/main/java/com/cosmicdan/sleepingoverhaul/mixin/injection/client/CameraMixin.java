@@ -1,6 +1,8 @@
 package com.cosmicdan.sleepingoverhaul.mixin.injection.client;
 
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
+import com.cosmicdan.sleepingoverhaul.client.ClientConfig;
+import com.cosmicdan.sleepingoverhaul.client.ClientConfig.TimelapseCameraType;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -33,6 +35,10 @@ public abstract class CameraMixin {
 
     @Shadow protected abstract void setPosition(Vec3 vec3);
 
+    @Shadow private Vec3 position;
+
+    private double previousMaxHeight = -1.0;
+
     @SuppressWarnings("MethodWithTooManyParameters")
     @Inject(
             method = "setup",
@@ -45,31 +51,30 @@ public abstract class CameraMixin {
             // just skip to next cine stage for now (only did this for a transition animation originally but meh)
             Minecraft.getInstance().gameRenderer.setPanoramicMode(false);
             SleepingOverhaul.clientState.advanceTimelapseCinematicStage();
+            previousMaxHeight = -1.0;
         } else if (cineStage == 2) {
-            if (levelIn instanceof ClientLevel level) {
+            final TimelapseCameraType timelapseCameraType = SleepingOverhaul.clientConfig.timelapseCameraType.get();
+            if ((timelapseCameraType != TimelapseCameraType.None) && (levelIn instanceof ClientLevel level)) {
                 // level.getSunAngle is weird, so we calculate it ourselves
                 final float timeOfDayAsFraction = (level.getDayTime() % 24000L) / 24000.0f;
-                // rotate first
+
+                // rotate camera first
                 setRotation((timeOfDayAsFraction * 360.0f * 2.0f) - 90, 0.0f);
 
-                // OLD: Results in weird collision stuff
-                /*
-                // move camera back and up
-                move(-6.0, 2.0, 0.0);
-                int moveCounter = 0;
-                while (moveCounter < 10) {
-                    move(-1.0, 1.0, 0.0);
-                    if (level.canSeeSky(getBlockPosition()))
-                        break;
-                    moveCounter++;
+                if (timelapseCameraType == TimelapseCameraType.SurfaceOrbit) {
+                    // SurfaceOrbit: Move camera back a bit
+                    move(-6.0, 1.0, 0.0);
                 }
-                 */
-
-                // NEW: just rotate cam from the topmost block, no orbit
-                final BlockPos topmostPosition = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, getBlockPosition()).above(3);
-                setPosition(new Vec3(topmostPosition.getX(), topmostPosition.getY(), topmostPosition.getZ()));
+                if ((timelapseCameraType == TimelapseCameraType.SurfaceOrbit) || (timelapseCameraType == TimelapseCameraType.SurfaceRotation)) {
+                    // SurfaceOrbit *or* SurfaceRotation: move camera to surface block + 3 (unless lower than previous surface height in the current cine)
+                    final BlockPos topmostPosition = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, getBlockPosition()).above(3);
+                    if (topmostPosition.getY() > previousMaxHeight)
+                        previousMaxHeight = topmostPosition.getY();
+                    setPosition(new Vec3(position.x(), previousMaxHeight, position.z()));
+                }
             }
         } else if (cineStage == 3) {
+            previousMaxHeight = -1.0;
             Minecraft.getInstance().gameRenderer.setPanoramicMode(false);
         }
     }

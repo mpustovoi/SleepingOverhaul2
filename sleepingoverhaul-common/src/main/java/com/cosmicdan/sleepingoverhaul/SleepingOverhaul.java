@@ -1,5 +1,6 @@
 package com.cosmicdan.sleepingoverhaul;
 
+import com.cosmicdan.sleepingoverhaul.client.ClientConfig;
 import com.cosmicdan.sleepingoverhaul.client.ClientState;
 import com.cosmicdan.sleepingoverhaul.server.ClientStateDummy;
 import com.cosmicdan.sleepingoverhaul.server.ServerConfig;
@@ -26,21 +27,24 @@ public class SleepingOverhaul {
     public static IClientState clientState = null;
 
     public static ServerConfig serverConfig = null;
-
+    public static ClientConfig clientConfig = null;
 
     //public static void init() {
     @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
     public SleepingOverhaul() {
         // Register server/world config
         final Pair<ServerConfig, ForgeConfigSpec> specPairServer = new ForgeConfigSpec.Builder().configure(ServerConfig::new);
-        final ForgeConfigSpec serverConfigSpec = specPairServer.getRight();
         serverConfig = specPairServer.getLeft();
-        ModConfigHelper.registerConfig(Type.SERVER, serverConfigSpec);
+        ModConfigHelper.registerConfig(Type.SERVER, specPairServer.getRight());
 
         serverState = new ServerState();
-        if (Platform.getEnvironment() == Env.CLIENT)
+        if (Platform.getEnvironment() == Env.CLIENT) {
             clientState = new ClientState();
-        else
+            // also register client config
+            final Pair<ClientConfig, ForgeConfigSpec> specPairClient = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
+            clientConfig = specPairClient.getLeft();
+            ModConfigHelper.registerConfig(Type.CLIENT, specPairClient.getRight());
+        } else
             clientState = new ClientStateDummy();
 
 
