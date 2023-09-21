@@ -31,7 +31,7 @@ public abstract class PlayerMixin extends LivingEntity implements PlayerMixinPro
             at = @At(value = "INVOKE", ordinal = 0, target = "net/minecraft/world/entity/player/Player.isSleeping ()Z"),
             require = 1, allow = 1
     )
-    // TODO: Doesn't handle the second isSleeping call, related to "time since rest" player stat
+    // TODO: Doesn't handle the second isSleeping call, related to "time since rest" player stat... important?
     private boolean isSleepingCheck(final Player self, Operation<Boolean> original) {
         final boolean isInBed = isSleeping();
         SleepingOverhaul.clientState.onSleepingCheck(isInBed);

@@ -33,13 +33,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 /**
- * Various hooks:
- * - Controlling custom "when all players are asleep" logic
- * - Whether to skip to day or not
- * - Whether to wake all players wake the next morning
- * - Whether to clear weather after skip-to-day
- *
- * TODO: Javadoc for each method
+ * Various hooks, refer to each each method
  *
  * @author Daniel 'CosmicDan' Connolly
  */
@@ -54,13 +48,16 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
+    /**
+     * Hooks and replaces GameRules.RULE_DAYLIGHT check to handle the lifecycle and such of custom sleep actions
+     */
     @WrapOperation(
             method = "tick(Ljava/util/function/BooleanSupplier;)V",
             at = @At(value = "INVOKE", ordinal = 0, target = "net/minecraft/world/level/GameRules.getBoolean (Lnet/minecraft/world/level/GameRules$Key;)Z"),
             require = 1, allow = 1
     )
     public final boolean shouldGetBooleanGameRuleFirst(final GameRules gameRules, final GameRules.Key<GameRules.BooleanValue> key, Operation<Boolean> original) {
-        if (key.equals(GameRules.RULE_DAYLIGHT)) {
+        if (key.equals(GameRules.RULE_DAYLIGHT)) { // should always be true
             if (gameRules.getBoolean(key)) {
                 switch (SleepingOverhaul.serverConfig.sleepAction.get()) {
                     case Timelapse -> {
@@ -91,29 +88,25 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
             resetWeatherCycle();
     }
 
+    /**
+     * Hooks and forces-false on GameRules.RULE_WEATHER_CYCLE check; since we need to do it ourselves at the appropriate time
+     */
     @WrapOperation(
             method = "tick(Ljava/util/function/BooleanSupplier;)V",
             at = @At(value = "INVOKE", ordinal = 1, target = "net/minecraft/world/level/GameRules.getBoolean (Lnet/minecraft/world/level/GameRules$Key;)Z"),
             require = 1, allow = 1
     )
     public final boolean shouldGetBooleanGameRuleSecond(final GameRules gameRules, final GameRules.Key<GameRules.BooleanValue> key, Operation<Boolean> original) {
-        if (key.equals(GameRules.RULE_WEATHER_CYCLE)) {
-            return SleepingOverhaul.serverConfig.morningResetWeather.get();
+        if (key.equals(GameRules.RULE_WEATHER_CYCLE)) { // should always be true, we verify it anyway
+            return false; // always return false; we handle it in shouldGetBooleanGameRuleFirst
         } else {
             throw new RuntimeException("Unexpected Minecraft code; the second GameRules.getBoolean call was not RULE_WEATHER_CYCLE! Mod conflict...?");
         }
     }
 
-    @Inject(
-            method = "tick(Ljava/util/function/BooleanSupplier;)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;updateSkyBrightness()V"),
-            require = 1, allow = 1
-    )
-    public final void onUpdateSkyBrightness(BooleanSupplier booleanSupplier, CallbackInfo ci) {
-        SleepingOverhaul.serverState.onBeforeTickTime(getLevel());
-    }
-
-    // INVOKEVIRTUAL net/minecraft/server/level/ServerLevel.wakeUpAllPlayers ()V
+    /**
+     * Hooks and cancels wakeUpAllPlayers; we need to do it ourselves at the appropriate time
+     */
     @Redirect(
             method = "tick(Ljava/util/function/BooleanSupplier;)V",
             at = @At(value = "INVOKE", target = "net/minecraft/server/level/ServerLevel.wakeUpAllPlayers ()V"),
@@ -124,15 +117,16 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
         return;
     }
 
-    // INVOKEVIRTUAL net/minecraft/server/level/ServerLevel.resetWeatherCycle ()V
-    @Redirect(
+    /**
+     * Hooks the sky brightness check since it is a convenient place to check if timelapse has reached end time.
+     */
+    @Inject(
             method = "tick(Ljava/util/function/BooleanSupplier;)V",
-            at = @At(value = "INVOKE", target = "net/minecraft/server/level/ServerLevel.resetWeatherCycle ()V"),
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;updateSkyBrightness()V"),
             require = 1, allow = 1
     )
-    public final void onResetWeatherCycle(ServerLevel self) {
-        // Do nothing always, we reset weather ourselves at the appropriate time
-        return;
+    public final void onUpdateSkyBrightness(BooleanSupplier booleanSupplier, CallbackInfo ci) {
+        SleepingOverhaul.serverState.onBeforeTickTime(getLevel());
     }
 
     @Shadow

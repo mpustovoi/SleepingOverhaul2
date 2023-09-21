@@ -26,28 +26,6 @@ public abstract class ServerPlayerMixin extends Player {
         super(level, blockPos, f, gameProfile);
     }
 
-    /*
-    @Inject(at = @At("HEAD"), method = "startSleepInBed(Lnet/minecraft/core/BlockPos;)Lcom/mojang/datafixers/util/Either;")
-    private void startSleepInBed(final BlockPos bed, final CallbackInfoReturnable<Either<BedSleepingProblem, Unit>> callback) {
-        // DO NOTHING, kept as reference - need to replace individual things within the target.
-    }
-
-     */
-
-    // TODO: Implement this daytime sleep check for Fabric (Forge injects it's own event)
-    //public startSleepInBed(Lnet/minecraft/core/BlockPos;)Lcom/mojang/datafixers/util/Either;
-    //INVOKEVIRTUAL net/minecraft/world/level/Level.isDay ()Z
-    /*
-    @Redirect(
-            method = "startSleepInBed(Lnet/minecraft/core/BlockPos;)Lcom/mojang/datafixers/util/Either;",
-            at = @At(value = "INVOKE", target = "net/minecraft/world/level/Level.isDay ()Z")
-    )
-    private boolean onIsDaySleepCheck(final Level instance) {
-        if (SleepingOverhaul.CONFIG_SERVER.bedRestEnabled.get())
-            return false; // return false to allow bed rest
-        else
-            return instance.isDay();
-    }
-     */
+    // Nothing here yet; this is for future features
 
 }

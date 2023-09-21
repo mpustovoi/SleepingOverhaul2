@@ -28,8 +28,7 @@ public class SleepingOverhaulForge {
     }
 
     /**
-     * Allows laying in bed at any time. We re-implement the sleep time check elsewhere.
-     * @param event
+     * Allows to lay in bed at any time when bedrest is enabled. We re-implement the sleep time check elsewhere.
      */
     @SubscribeEvent
     public void onSleepingTimeCheck(final SleepingTimeCheckEvent event) {
