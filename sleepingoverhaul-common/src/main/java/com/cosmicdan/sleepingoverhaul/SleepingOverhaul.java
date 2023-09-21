@@ -49,17 +49,19 @@ public class SleepingOverhaul {
 
     private static EventResult onLivingHurt(LivingEntity entity, DamageSource source, float amount) {
         EventResult eventResult = EventResult.pass(); // default = pass it on
-        if (entity instanceof ServerPlayer player) {
-            final float adjustedDamage = serverState.getPlayerHurtAdj(player, source, amount);
-            if (Float.isNaN(adjustedDamage))
-                // NaN = damage was cancelled
-                eventResult = EventResult.interruptFalse();
-            else if (Float.isInfinite(adjustedDamage)) {
-                // infinite = damage should be insta-kill
-                eventResult = EventResult.interruptFalse();
-                player.kill();
-                // TODO: replace above with custom damage source, like so (only make it a class extending since DamageSource is protected)
-                //player.hurt(new DamageSource("outOfWorld").bypassArmor(), Float.MAX_VALUE);
+        if (serverState.timelapsePending()) {
+            if (entity instanceof ServerPlayer player) {
+                if (! source.getMsgId().equals(TimelapseKillDamageSource.MSG_ID)) {
+                    final float adjustedDamage = serverState.getPlayerHurtAdj(player, source, amount);
+                    if (Float.isNaN(adjustedDamage))
+                        // NaN = damage was cancelled
+                        eventResult = EventResult.interruptFalse();
+                    else if (Float.isInfinite(adjustedDamage)) {
+                        // infinite = insta-kill configured
+                        eventResult = EventResult.interruptFalse();
+                        player.hurt(new TimelapseKillDamageSource(), Float.MAX_VALUE);
+                    }
+                }
             }
         }
         return eventResult;

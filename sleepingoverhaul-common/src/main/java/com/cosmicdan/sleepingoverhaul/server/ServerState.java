@@ -130,7 +130,7 @@ public class ServerState {
         if (timelapsePending()) {
             // timelapse active and player was attacked
             if (SleepingOverhaul.serverConfig.sleepPreventMagicDamage.get() && source.isMagic())
-                amountAdjusted = 0.0f; // remove magic damage if configured
+                amountAdjusted = Float.NaN;
             else {
                 switch (SleepingOverhaul.serverConfig.sleepAttackedAction.get()) {
                     case NoChange -> {}
