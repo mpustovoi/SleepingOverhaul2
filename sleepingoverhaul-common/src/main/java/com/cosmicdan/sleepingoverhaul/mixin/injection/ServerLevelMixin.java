@@ -5,11 +5,13 @@ import com.cosmicdan.sleepingoverhaul.server.ServerState;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.logging.LogUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
@@ -24,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -144,6 +147,34 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
     @Shadow @Final private List<ServerPlayer> players;
 
     @Shadow public abstract ServerLevel getLevel();
+
+    /**
+     * Enables feature for preventing spawns during timelapse
+     */
+    @Inject(
+            method = "isNaturalSpawningAllowed(Lnet/minecraft/core/BlockPos;)Z",
+            at = @At("HEAD"),
+            cancellable = true,
+            require = 1, allow = 1
+    )
+    public final void onNaturalSpawnCheckBlockPos(final BlockPos blockPos, final CallbackInfoReturnable<Boolean> cir) {
+        if (SleepingOverhaul.serverConfig.disableNaturalSpawning.get() && (SleepingOverhaul.serverState.timelapsePending()))
+            cir.setReturnValue(false);
+    }
+
+    /**
+     * Enables feature for preventing spawns during timelapse
+     */
+    @Inject(
+            method = "isNaturalSpawningAllowed(Lnet/minecraft/world/level/ChunkPos;)Z",
+            at = @At("HEAD"),
+            cancellable = true,
+            require = 1, allow = 1
+    )
+    public final void onNaturalSpawnCheckChunk(ChunkPos chunkPoss, final CallbackInfoReturnable<Boolean> cir) {
+        if (SleepingOverhaul.serverConfig.disableNaturalSpawning.get() && (SleepingOverhaul.serverState.timelapsePending()))
+            cir.setReturnValue(false);
+    }
 
     /*
     // GETFIELD net/minecraft/server/level/ServerLevel.entityTickList : Lnet/minecraft/world/level/entity/EntityTickList;
