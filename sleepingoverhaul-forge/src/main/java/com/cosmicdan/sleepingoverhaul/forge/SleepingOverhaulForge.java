@@ -37,21 +37,12 @@ public class SleepingOverhaulForge {
             event.setResult(Result.ALLOW);
     }
 
+    /**
+     * Only used for performance counting stats right now
+     */
     @SubscribeEvent
     public void onServerTick(final TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END)
             SleepingOverhaul.serverState.onServerTickPost();
-    }
-
-    @SubscribeEvent
-    public void onLivingHurt(final LivingHurtEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            final float adjustedDamage = SleepingOverhaul.serverState.onPlayerHurt(player, event.getSource(), event.getAmount());
-            if (adjustedDamage > 0.0)
-                event.setAmount(adjustedDamage);
-            else
-                event.setCanceled(true);
-
-        }
     }
 }

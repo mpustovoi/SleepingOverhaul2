@@ -1,6 +1,5 @@
 package com.cosmicdan.sleepingoverhaul.forge;
 
-import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.IConfigSpec;

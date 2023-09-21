@@ -125,7 +125,7 @@ public class ServerState {
         return timelapseEnd > 0;
     }
 
-    public float onPlayerHurt(ServerPlayer player, DamageSource source, float amount) {
+    public float getPlayerHurtAdj(ServerPlayer player, DamageSource source, float amount) {
         float amountAdjusted = amount;
         if (timelapsePending()) {
             // timelapse active and player was attacked
@@ -134,8 +134,8 @@ public class ServerState {
             else {
                 switch (SleepingOverhaul.serverConfig.sleepAttackedAction.get()) {
                     case NoChange -> {}
-                    case InstantKill -> amountAdjusted = Float.MAX_VALUE;
-                    case Invincible -> amountAdjusted = 0.0f;
+                    case InstantKill -> amountAdjusted = Float.POSITIVE_INFINITY;
+                    case Invincible -> amountAdjusted = Float.NaN;
                 }
             }
         }

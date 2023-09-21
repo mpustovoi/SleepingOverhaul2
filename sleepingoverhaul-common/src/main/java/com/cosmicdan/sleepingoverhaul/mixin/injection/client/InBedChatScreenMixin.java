@@ -10,7 +10,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.InBedChatScreen;
@@ -21,6 +20,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * Modifications to the in-bed chat screen:
@@ -39,14 +39,13 @@ public abstract class InBedChatScreenMixin extends ChatScreen {
 
     /**
      * Support for requesting Sleep by pressing ENTER when there is no chat input
-     * @param emptyString
      */
-    @WrapOperation(
+    @Inject(
             method = "keyPressed(III)Z",
             at = @At(value = "INVOKE", target = "net/minecraft/client/gui/components/EditBox.setValue (Ljava/lang/String;)V"),
             require = 1, allow = 1
     )
-    public final void onClearChatEntry(final EditBox self, final String emptyString, final Operation<Void> original) {
+    public final void onClearChatEntry(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
         if (SleepingOverhaul.serverConfig.bedRestOnEnter.get()) {
             if (SleepingOverhaul.clientState.isSleepButtonActive()) {
                 if (input.getValue().isEmpty()) {

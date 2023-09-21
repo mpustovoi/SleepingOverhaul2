@@ -22,7 +22,7 @@ public class ServerConfig {
 
     private static final String sectionTimelapse = "timelapse";
     public final ForgeConfigSpec.EnumValue<AttackedWhileSleepingAction> sleepAttackedAction;
-    private static final String sleepAttackedActionTxt = " The action to perform on a player if they are attacked during timelapse sleep";
+    private static final String sleepAttackedActionTxt = " The action to perform on a player if they are attacked during timelapse sleep, for damage sources that do *not* match any preventions below.";
     public final ForgeConfigSpec.BooleanValue sleepPreventMagicDamage;
     private static final String sleepPreventMagicDamageTxt = " If true, damage type of 'Magic' (pre-1.19.4) or 'Indirect' (1.19.4+) will not apply to players during timelapse. This includes DoT's like Poison.";
     public final ForgeConfigSpec.BooleanValue logTimelapsePerformanceStats;

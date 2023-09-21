@@ -20,7 +20,7 @@ loom {
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
         mixinConfig "sleepingoverhaul-common.mixins.json"
-        mixinConfig "sleepingoverhaul.mixins.json"
+        //mixinConfig "sleepingoverhaul.mixins.json"
     }
 }
 
