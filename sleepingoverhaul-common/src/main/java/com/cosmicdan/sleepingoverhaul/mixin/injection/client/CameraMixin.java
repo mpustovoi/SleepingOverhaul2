@@ -2,6 +2,7 @@ package com.cosmicdan.sleepingoverhaul.mixin.injection.client;
 
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -42,6 +43,7 @@ public abstract class CameraMixin {
         final int cineStage = SleepingOverhaul.clientState.getTimelapseCinematicStage();
         if (cineStage == 1) {
             // just skip to next cine stage for now (only did this for a transition animation originally but meh)
+            Minecraft.getInstance().gameRenderer.setPanoramicMode(false);
             SleepingOverhaul.clientState.advanceTimelapseCinematicStage();
         } else if (cineStage == 2) {
             if (levelIn instanceof ClientLevel level) {
@@ -67,6 +69,8 @@ public abstract class CameraMixin {
                 final BlockPos topmostPosition = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, getBlockPosition()).above(3);
                 setPosition(new Vec3(topmostPosition.getX(), topmostPosition.getY(), topmostPosition.getZ()));
             }
+        } else if (cineStage == 3) {
+            Minecraft.getInstance().gameRenderer.setPanoramicMode(false);
         }
     }
 }
