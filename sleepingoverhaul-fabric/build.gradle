@@ -42,9 +42,13 @@ dependencies {
     implementation 'com.electronwill.night-config:toml:3.6.3'
     modImplementation "net.minecraftforge:forgeconfigapiport-fabric:3.2.4"
     
-    // Catalogue (mod menu) mod (1.19+)
-    //modImplementation "curse.maven:catalogue-fabric-667377:4590891"
-    modImplementation "curse.maven:modmenu-308702:4145213"
+    // Runtime only mods
+    // Catalogue (1.19+) or Mod Menu
+    //modLocalRuntime "curse.maven:catalogue-fabric-667377:4590891"
+    // Mod Menu 1.18.2
+    modLocalRuntime "curse.maven:modmenu-308702:4145213"
+    // Configured (Config GUI) 1.18.2
+    modLocalRuntime "curse.maven:configured-457570:4462832"
 }
 
 processResources {
