@@ -4,16 +4,24 @@ plugins {
 
 apply from: '../modprops.gradle'
 archivesBaseName = project.archives_base_name
-version = project.mod_version + "-Fabric-${rootProject.minecraft_version}"
+version = project.mod_version + "-NeoForge-${rootProject.minecraft_version}"
 group = project.maven_group
 
 architectury {
     platformSetupLoomIde()
-    fabric()
+    forge()
 }
 
 loom {
     accessWidenerPath = project(":${project.modid}-common").loom.accessWidenerPath
+
+    forge {
+        convertAccessWideners = true
+        extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
+
+        mixinConfig "sleepingoverhaul-common.mixins.json"
+        //mixinConfig "sleepingoverhaul.mixins.json"
+    }
 }
 
 configurations {
@@ -21,44 +29,35 @@ configurations {
     shadowCommon // Don't use shadow from the shadow plugin since it *excludes* files.
     compileClasspath.extendsFrom common
     runtimeClasspath.extendsFrom common
-    developmentFabric.extendsFrom common
+    developmentForge.extendsFrom common
 }
 
 dependencies {
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+    forge "net.neoforged:forge:${rootProject.neoforge_version}"
     // Remove the next line if you don't want to depend on the API
-    modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
+    modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
 
     common(project(path: ":${project.modid}-common", configuration: "namedElements")) { transitive = false }
-    shadowCommon(project(path: ":${project.modid}-common", configuration: "transformProductionFabric")) { transitive = false }
+    shadowCommon(project(path: ":${project.modid}-common", configuration: "transformProductionForge")) { transitive = false }
     
-    include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.2.0-rc.3")))
-    
-    // Forge config API port
-    implementation 'com.electronwill.night-config:core:3.6.3'
-    implementation 'com.electronwill.night-config:toml:3.6.3'
-    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"
-    
-    // TODO
-    // Runtime only mods
-    // Catalogue (1.19+) or Mod Menu
-    //modLocalRuntime "curse.maven:catalogue-fabric-667377:4590891"
-    // Mod Menu 1.18.2
-    //modLocalRuntime "curse.maven:modmenu-308702:4145213"
-    // Configured (Config GUI) 1.18.2
+    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.2.0-rc.3"))
+    implementation(include("io.github.llamalad7:mixinextras-forge:0.2.0-rc.3"))
+
+    // Runtime-only mods for 1.18.2
+    // Configured
     //modLocalRuntime "curse.maven:configured-457570:4462832"
 }
 
 processResources {
     inputs.property "version", project.version
 
-    filesMatching("fabric.mod.json") {
+    filesMatching("META-INF/mods.toml") {
         expand "version": project.version
     }
 }
 
 shadowJar {
+    exclude "fabric.mod.json"
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
@@ -66,7 +65,6 @@ shadowJar {
 }
 
 remapJar {
-    injectAccessWidener = true
     input.set shadowJar.archiveFile
     dependsOn shadowJar
     archiveClassifier = null
@@ -90,7 +88,7 @@ components.java {
 
 publishing {
     publications {
-        mavenFabric(MavenPublication) {
+        mavenForge(MavenPublication) {
             artifactId = project.archives_base_name + "-" + project.name
             from components.java
         }

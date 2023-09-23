@@ -20,10 +20,11 @@ dependencies {
     
     implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.2.0-rc.3"))
     
+    // TODO
     // Forge config API port
     implementation 'com.electronwill.night-config:core:3.6.3'
     implementation 'com.electronwill.night-config:toml:3.6.3'
-    compileOnly "net.minecraftforge:forgeconfigapiport-fabric:3.2.4"
+    compileOnly "fuzs.forgeconfigapiport:forgeconfigapiport-common:8.0.0"
 }
 
 publishing {

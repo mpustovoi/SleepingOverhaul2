@@ -1,6 +1,5 @@
 package com.cosmicdan.sleepingoverhaul.client;
 
-import com.cosmicdan.sleepingoverhaul.server.ServerConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 /**

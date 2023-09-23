@@ -14,7 +14,8 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.InBedChatScreen;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,6 +34,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Environment(EnvType.CLIENT)
 @Mixin(InBedChatScreen.class)
 public abstract class InBedChatScreenMixin extends ChatScreen {
+    // TODO: No UI feedback on Sleep (button doesn't disable). Also check sleep message during day.
+    //       Might be related to PACKET_REALLY_SLEEPING failure...? Or maybe diff InBedChatScreen between 1.18.2 and 1.20.1...
     protected InBedChatScreenMixin(final String string) {
         super(string);
     }
@@ -71,13 +74,15 @@ public abstract class InBedChatScreenMixin extends ChatScreen {
                 if (SleepingOverhaul.serverConfig.bedRestEnabled.get()) {
                     // reduce buttonLeave width and move 5px left
                     buttonLeave.setWidth(100);
-                    buttonLeave.x -= 5;
+                    buttonLeave.setX(buttonLeave.getX() - 5);
                     // add our new "Sleep" button with same dimensions, 5px to the right of screen center
 
-                    final Button sleepButton = new Button((width / 2) + 5, buttonLeave.y, 100, 20,
-                            new TranslatableComponent("gui.sleepingoverhaul.sleepButton"),
+                    final Button sleepButton = new Button.Builder(
+                            Component.translatable("gui.sleepingoverhaul.sleepButton"),
                             (Button button) -> onClickSleep(Minecraft.getInstance().level)
-                    );
+                    ).bounds((width / 2) + 5, buttonLeave.getY(), 100, 20
+                    ).build();
+
                     addRenderableWidget(sleepButton);
                     SleepingOverhaul.clientState.sleepButtonAssign(sleepButton);
                 }
