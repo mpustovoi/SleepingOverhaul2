@@ -45,7 +45,7 @@ dependencies {
 
     // Runtime-only mods for 1.18.2
     // Configured
-    //modLocalRuntime "curse.maven:configured-457570:4462832"
+    modLocalRuntime "curse.maven:configured-457570:4462832"
 }
 
 processResources {

@@ -38,16 +38,16 @@ dependencies {
     // Forge config API port
     implementation 'com.electronwill.night-config:core:3.6.3'
     implementation 'com.electronwill.night-config:toml:3.6.3'
-    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"
+    modImplementation "net.minecraftforge:forgeconfigapiport-fabric:3.2.4"
     
     // TODO
     // Runtime only mods
     // Catalogue (1.19+) or Mod Menu
     //modLocalRuntime "curse.maven:catalogue-fabric-667377:4590891"
     // Mod Menu 1.18.2
-    //modLocalRuntime "curse.maven:modmenu-308702:4145213"
+    modLocalRuntime "curse.maven:modmenu-308702:4145213"
     // Configured (Config GUI) 1.18.2
-    //modLocalRuntime "curse.maven:configured-457570:4462832"
+    modLocalRuntime "curse.maven:configured-457570:4462832"
 }
 
 processResources {
