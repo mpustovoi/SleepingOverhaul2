@@ -38,7 +38,7 @@ dependencies {
     // Forge config API port
     implementation 'com.electronwill.night-config:core:3.6.3'
     implementation 'com.electronwill.night-config:toml:3.6.3'
-    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"
+    modImplementation "net.minecraftforge:forgeconfigapiport-fabric:4.2.11"
     
     // TODO
     // Runtime only mods
