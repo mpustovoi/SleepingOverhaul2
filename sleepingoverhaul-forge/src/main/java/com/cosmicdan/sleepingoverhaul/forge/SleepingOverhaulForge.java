@@ -1,13 +1,9 @@
 package com.cosmicdan.sleepingoverhaul.forge;
 
-import com.cosmicdan.sleepingoverhaul.server.ServerConfig;
-import dev.architectury.platform.forge.EventBuses;
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
+import dev.architectury.platform.forge.EventBuses;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
