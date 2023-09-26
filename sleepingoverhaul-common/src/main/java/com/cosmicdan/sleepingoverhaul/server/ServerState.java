@@ -92,7 +92,7 @@ public class ServerState {
 
     private void onReallySleepingRecv(FriendlyByteBuf buf, NetworkManager.PacketContext context) {
         final Player player = context.getPlayer();
-        if (canSleepNow(player.level())) {
+        if (canSleepNow(player.level)) {
             final boolean reallySleeping = buf.readBoolean();
             //noinspection CastToIncompatibleInterface
             ((PlayerMixinProxy) player).setReallySleeping(reallySleeping);
