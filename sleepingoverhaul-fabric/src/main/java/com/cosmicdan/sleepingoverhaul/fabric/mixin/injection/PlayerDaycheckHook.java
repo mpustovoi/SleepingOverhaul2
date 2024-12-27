@@ -23,6 +23,6 @@ public class PlayerDaycheckHook {
         if (SleepingOverhaul.serverConfig.bedRestEnabled.get())
             return false;
         else
-            return original.call();
+            return original.call(self);
     }
 }
