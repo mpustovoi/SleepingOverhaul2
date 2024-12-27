@@ -4,7 +4,7 @@ version = project.mod_version
 group = project.maven_group
 
 architectury {
-    common(rootProject.enabled_platforms.split(","))
+    common rootProject.enabled_platforms.split(',')
 }
 
 loom {
@@ -20,23 +20,9 @@ dependencies {
     
     implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.2.0-rc.3"))
     
-    // TODO
     // Forge config API port
     implementation 'com.electronwill.night-config:core:3.6.3'
     implementation 'com.electronwill.night-config:toml:3.6.3'
     compileOnly "fuzs.forgeconfigapiport:forgeconfigapiport-common:8.0.0"
 }
 
-publishing {
-    publications {
-        mavenCommon(MavenPublication) {
-            artifactId = project.archives_base_name
-            from components.java
-        }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
-    }
-}

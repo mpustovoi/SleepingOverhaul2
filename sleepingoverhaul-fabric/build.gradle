@@ -1,5 +1,5 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "8.1.1"
+    id 'com.github.johnrengelman.shadow'
 }
 
 apply from: '../modprops.gradle'
@@ -17,11 +17,20 @@ loom {
 }
 
 configurations {
-    common
-    shadowCommon // Don't use shadow from the shadow plugin since it *excludes* files.
+    common {
+        canBeResolved = true
+        canBeConsumed = false
+    }
     compileClasspath.extendsFrom common
     runtimeClasspath.extendsFrom common
     developmentFabric.extendsFrom common
+
+    // Files in this configuration will be bundled into your mod using the Shadow plugin.
+    // Don't use the `shadow` configuration from the plugin itself as it's meant for excluding files.
+    shadowBundle {
+        canBeResolved = true
+        canBeConsumed = false
+    }
 }
 
 dependencies {
@@ -30,8 +39,8 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
-    common(project(path: ":${project.modid}-common", configuration: "namedElements")) { transitive = false }
-    shadowCommon(project(path: ":${project.modid}-common", configuration: "transformProductionFabric")) { transitive = false }
+    common(project(path: ":${project.modid}-common", configuration: "namedElements")) { transitive false }
+    shadowBundle(project(path: ":${project.modid}-common", configuration: "transformProductionFabric"))
     
     include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.2.0-rc.3")))
     
@@ -51,24 +60,24 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", project.version
+    inputs.property 'version', project.version
 
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
+    filesMatching('fabric.mod.json') {
+        expand version: project.version
     }
 }
 
 shadowJar {
-    exclude "architectury.common.json"
+    //exclude "architectury.common.json"
 
-    configurations = [project.configurations.shadowCommon]
-    archiveClassifier = "dev-shadow"
+    configurations = [project.configurations.shadowBundle]
+    archiveClassifier = 'dev-shadow'
 }
 
 remapJar {
     injectAccessWidener = true
-    input.set shadowJar.archiveFile
-    dependsOn shadowJar
+    inputFile.set shadowJar.archiveFile
+    //dependsOn shadowJar
     archiveClassifier = null
 }
 
@@ -82,6 +91,7 @@ sourcesJar {
     from commonSources.archiveFile.map { zipTree(it) }
 }
 
+/*
 components.java {
     withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
         skip()
@@ -101,3 +111,4 @@ publishing {
         // Add repositories to publish to here.
     }
 }
+*/
