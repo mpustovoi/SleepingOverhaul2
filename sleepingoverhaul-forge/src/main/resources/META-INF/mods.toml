@@ -6,7 +6,7 @@ license = "LGPL3"
 [[mods]]
 modId = "sleepingoverhaul"
 version = "${version}"
-displayName = "SleepingOverhaul"
+displayName = "Sleeping Overhaul"
 authors = "CosmicDan"
 description = '''
 Replaces skip-to-day on sleep with a beautiful panoramic timelapse, and more!
@@ -31,7 +31,7 @@ side = "BOTH"
 [[dependencies.sleepingoverhaul]]
 modId = "architectury"
 mandatory = true
-versionRange = "[9.1.12,)"
+versionRange = "[9.2.14,)"
 # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
 ordering = "NONE"
 side = "BOTH"
