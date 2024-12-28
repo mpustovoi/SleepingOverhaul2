@@ -1,5 +1,6 @@
 package com.cosmicdan.sleepingoverhaul.mixin;
 
+import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import dev.architectury.platform.Platform;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
@@ -32,7 +33,8 @@ public class MixinPluginCommon implements IMixinConfigPlugin {
 
     @Override
     public void onLoad(String mixinPackage) {
-        //InjectionInfo.register(ModifyConstantCheckedInjectionInfo.class);  // @ModifyConstantChecked
+        // This might be necessary for some setups (e.g. Forge 1.18.2), in any case it's best to be sure
+        MixinExtrasBootstrap.init();
     }
 
     @Override
