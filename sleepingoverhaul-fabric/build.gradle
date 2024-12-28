@@ -42,8 +42,6 @@ dependencies {
     common(project(path: ":${project.modid}-common", configuration: "namedElements")) { transitive false }
     shadowBundle(project(path: ":${project.modid}-common", configuration: "transformProductionFabric"))
     
-    include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.2.0-rc.3")))
-    
     // Forge config API port
     implementation 'com.electronwill.night-config:core:3.6.3'
     implementation 'com.electronwill.night-config:toml:3.6.3'

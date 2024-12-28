@@ -49,8 +49,9 @@ dependencies {
     common(project(path: ":${project.modid}-common", configuration: "namedElements")) { transitive false }
     shadowBundle(project(path: ":${project.modid}-common", configuration: "transformProductionForge"))
     
-    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.2.0-rc.3"))
-    implementation(include("io.github.llamalad7:mixinextras-forge:0.2.0-rc.3"))
+    // MixinExtras is not included with Forge, add it
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
+    implementation(include("io.github.llamalad7:mixinextras-forge:0.4.1"))
 
     // Runtime-only mods for 1.18.2
     // Configured
