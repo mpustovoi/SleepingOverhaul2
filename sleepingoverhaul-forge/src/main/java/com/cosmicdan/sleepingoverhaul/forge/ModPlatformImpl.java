@@ -8,7 +8,7 @@ import net.minecraftforge.fml.config.ModConfig;
 /**
  * @author Daniel 'CosmicDan' Connolly
  */
-public class ModConfigHelperImpl {
+public class ModPlatformImpl {
     public static void registerConfig(final ModConfig.Type type, final IConfigSpec<ForgeConfigSpec> spec) {
         ModLoadingContext.get().registerConfig(type, spec);
     }

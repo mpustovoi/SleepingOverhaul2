@@ -35,7 +35,7 @@ public class SleepingOverhaul {
         // Register server/world config
         final Pair<ServerConfig, ForgeConfigSpec> specPairServer = new ForgeConfigSpec.Builder().configure(ServerConfig::new);
         serverConfig = specPairServer.getLeft();
-        ModConfigHelper.registerConfig(Type.SERVER, specPairServer.getRight());
+        ModPlatform.registerConfig(Type.SERVER, specPairServer.getRight());
 
         serverState = new ServerState();
         if (Platform.getEnvironment() == Env.CLIENT) {
@@ -43,7 +43,7 @@ public class SleepingOverhaul {
             // also register client config
             final Pair<ClientConfig, ForgeConfigSpec> specPairClient = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
             clientConfig = specPairClient.getLeft();
-            ModConfigHelper.registerConfig(Type.CLIENT, specPairClient.getRight());
+            ModPlatform.registerConfig(Type.CLIENT, specPairClient.getRight());
         } else
             clientState = new ClientStateDummy();
 
