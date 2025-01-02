@@ -1,6 +1,8 @@
 package com.cosmicdan.sleepingoverhaul.client;
 
 import com.cosmicdan.sleepingoverhaul.IClientState;
+import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
+import com.cosmicdan.sleepingoverhaul.mixin.proxy.PlayerMixinProxy;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.networking.NetworkManager.PacketContext;
 import dev.architectury.networking.NetworkManager.Side;
@@ -8,7 +10,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.InBedChatScreen;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Player.BedSleepingProblem;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -28,19 +31,23 @@ public class ClientState implements IClientState {
     private int timelapseCinematicStage = 0;
 
     public ClientState() {
-        NetworkManager.registerReceiver(Side.S2C, IClientState.PACKET_SLEEPERROR_TIME, this::recvSleepErrorTime);
-        NetworkManager.registerReceiver(Side.S2C, IClientState.PACKET_TIMELAPSE_CHANGE, this::recvTimelapseChange);
-    }
-
-    private void recvSleepErrorTime(final FriendlyByteBuf buf, final PacketContext context) {
-        context.getPlayer().displayClientMessage(BedSleepingProblem.NOT_POSSIBLE_NOW.getMessage(), true);
-        doSleepButtonCooldown();
+        NetworkManager.registerReceiver(Side.S2C, SleepingOverhaul.PACKET_TIMELAPSE_CHANGE, this::recvTimelapseChange);
+        NetworkManager.registerReceiver(Side.S2C, SleepingOverhaul.PACKET_TRY_REALLY_SLEEPING, this::recvTrySleepBounce);
     }
 
     private void recvTimelapseChange(final FriendlyByteBuf buf, final PacketContext context) {
         //final Player player = context.getPlayer();
         final boolean timelapseEnabled = buf.readBoolean();
         setTimelapseEnabled(timelapseEnabled);
+    }
+
+    private void recvTrySleepBounce(final FriendlyByteBuf buf, final PacketContext context) {
+        final Player player = context.getPlayer();
+        boolean reallySleeping = buf.readBoolean();
+        if (!reallySleeping) {
+            player.displayClientMessage(Component.translatable("gui.sleepingoverhaul.sleepNotPossibleNow"), true);
+            ((PlayerMixinProxy) player).setReallySleeping(false);
+        }
     }
 
     @Override
@@ -63,24 +70,18 @@ public class ClientState implements IClientState {
     }
 
     @Override
-    public void sleepButtonDisable() {
-        if (sleepButton != null)
+    public void sleepButtonCooldown() {
+        if (sleepButton != null) {
             sleepButton.active = false;
-    }
-
-    /**
-     * Just some simple client-side packet spam prevention
-     */
-    @Override
-    public void doSleepButtonCooldown() {
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (sleepButton != null)
-                    sleepButton.active = true;
-            }
-        }, 2000);
-    }
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (sleepButton != null)
+                        sleepButton.active = true;
+                }
+            }, 3000);
+        }
+    };
 
     @Override
     public void setTimelapseEnabled(final boolean timelapseEnabled) {

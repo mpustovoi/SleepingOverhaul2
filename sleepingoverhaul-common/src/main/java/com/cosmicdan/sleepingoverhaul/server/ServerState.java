@@ -1,15 +1,14 @@
 package com.cosmicdan.sleepingoverhaul.server;
 
-import com.cosmicdan.sleepingoverhaul.IClientState;
+import com.cosmicdan.sleepingoverhaul.ModPlatform;
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
-import com.cosmicdan.sleepingoverhaul.mixin.injection.ServerPlayerMixin;
 import com.cosmicdan.sleepingoverhaul.mixin.proxy.PlayerMixinProxy;
+import com.google.common.graph.Network;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.networking.NetworkManager.Side;
 import io.netty.buffer.Unpooled;
 import net.minecraft.Util;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -20,8 +19,6 @@ import net.minecraft.world.level.Level;
  * @author Daniel 'CosmicDan' Connolly
  */
 public class ServerState {
-    public static final ResourceLocation PACKET_REALLY_SLEEPING = new ResourceLocation(SleepingOverhaul.MOD_ID, "is_really_sleeping");
-
     // -1 = inactive
     private long timelapseEnd = -1;
 
@@ -30,7 +27,7 @@ public class ServerState {
     private long timelapseTickCount = 0;
 
     public ServerState() {
-        NetworkManager.registerReceiver(Side.C2S, PACKET_REALLY_SLEEPING, this::onReallySleepingRecv);
+        NetworkManager.registerReceiver(Side.C2S, SleepingOverhaul.PACKET_TRY_REALLY_SLEEPING, this::tryReallySleepingRecv);
     }
 
     public void onTimelapseStart() {
@@ -87,24 +84,27 @@ public class ServerState {
     private void notifyPlayersTimelapseChange(final Iterable<ServerPlayer> players, final boolean timelapseActive) {
         final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeBoolean(timelapseActive);
-        NetworkManager.sendToPlayers(players, IClientState.PACKET_TIMELAPSE_CHANGE, buf);
+        NetworkManager.sendToPlayers(players, SleepingOverhaul.PACKET_TIMELAPSE_CHANGE, buf);
     }
 
-    private void onReallySleepingRecv(FriendlyByteBuf buf, NetworkManager.PacketContext context) {
+    private void tryReallySleepingRecv(FriendlyByteBuf buf, NetworkManager.PacketContext context) {
         final Player player = context.getPlayer();
-        if (canSleepNow(player.level())) {
-            final boolean reallySleeping = buf.readBoolean();
+        boolean reallySleeping = buf.readBoolean();
+        if (reallySleeping && ModPlatform.canPlayerSleepNow(player)) {
             //noinspection CastToIncompatibleInterface
             ((PlayerMixinProxy) player).setReallySleeping(reallySleeping);
         } else {
-            final FriendlyByteBuf bufPong = new FriendlyByteBuf(Unpooled.buffer());
-            bufPong.writeBoolean(true);
-            NetworkManager.sendToPlayer((ServerPlayer) player, IClientState.PACKET_SLEEPERROR_TIME, bufPong);
+            reallySleeping = false;
         }
-    }
-
-    private boolean canSleepNow(final Level level) {
-        return !level.isDay();
+        if (player instanceof ServerPlayer serverPlayer) {
+            if (!reallySleeping) {
+                final FriendlyByteBuf bufPong = new FriendlyByteBuf(Unpooled.buffer());
+                bufPong.writeBoolean(false);
+                NetworkManager.sendToPlayer(serverPlayer, SleepingOverhaul.PACKET_TRY_REALLY_SLEEPING, bufPong);
+            }
+        } else {
+            SleepingOverhaul.LOGGER.warn("The player instance received from packet is not ServerPlayer, eh? Forge/Fabric changed stuf? Client screen-dim will be bugged...");
+        }
     }
 
     public void onBeforeTickTime(ServerLevel level) {

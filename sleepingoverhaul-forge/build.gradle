@@ -15,7 +15,7 @@ loom {
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
         mixinConfig "sleepingoverhaul-common.mixins.json"
-        //mixinConfig "sleepingoverhaul.mixins.json"
+        mixinConfig "sleepingoverhaul-forge.mixins.json"
     }
 }
 
@@ -53,9 +53,17 @@ dependencies {
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
     implementation(include("io.github.llamalad7:mixinextras-forge:0.4.1"))
 
-    // Runtime-only mods for 1.18.2
-    // Configured
-    //modLocalRuntime "curse.maven:configured-457570:4462832"
+    //// Mod compatibilities
+    // JEI (for finding and giving mod-added stuff)
+    modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
+    modRuntimeOnly("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
+    // Comforts 6.4.0 for Forge (and Spectre lib)
+    modImplementation("curse.maven:comforts-276951:5503516")
+    modLocalRuntime("curse.maven:spectrelib-993948:5217603")
+    // Sleep Tight 1.1.19 (and Moonlight Lib)
+    modImplementation("curse.maven:sleep-tight-817564:5085863")
+    modLocalRuntime("curse.maven:selene-499980:5478857")
 }
 
 processResources {

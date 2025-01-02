@@ -1,13 +1,13 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.cosmicdan.sleepingoverhaul.mixin.injection",
+  "package": "com.cosmicdan.sleepingoverhaul.forge.mixin.injection",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "BedRestMixinsCommonPlayer"
+    "BedRestMixinsForgeServerPlayer",
+    "BedRestMixinsForgePlayer"
   ],
   "client": [
-    "BedRestMixinsCommonClientInBedChatScreen"
   ],
   "server":[
   ],

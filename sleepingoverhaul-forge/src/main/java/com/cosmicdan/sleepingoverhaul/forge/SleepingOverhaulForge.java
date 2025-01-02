@@ -4,7 +4,10 @@ import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
 import dev.architectury.platform.forge.EventBuses;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
+import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
+import net.minecraftforge.event.level.SleepFinishedTimeEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -23,13 +26,19 @@ public class SleepingOverhaulForge {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    /**
-     * Allows to lay in bed at any time when bedrest is enabled. We re-implement the sleep time check elsewhere.
-     */
+    //@SubscribeEvent
+    //public void onSleepingTimeCheck(final SleepingTimeCheckEvent event) {
+        //SleepingOverhaul.LOGGER.info("~ Fired: SleepingTimeCheckEvent");
+    //}
+
+    //@SubscribeEvent
+    //public void onPlayerSleepInBedEvent(final PlayerSleepInBedEvent event) {
+    //    SleepingOverhaul.LOGGER.info("~ Fired: PlayerSleepInBedEvent");
+    //}
+
     @SubscribeEvent
-    public void onSleepingTimeCheck(final SleepingTimeCheckEvent event) {
-        if (SleepingOverhaul.serverConfig.bedRestEnabled.get())
-            event.setResult(Result.ALLOW);
+    public void onSleepFinishedTimeEvent(final SleepFinishedTimeEvent event) {
+        SleepingOverhaul.LOGGER.info("~ Fired: SleepFinishedTimeEvent");
     }
 
     /**
@@ -37,7 +46,7 @@ public class SleepingOverhaulForge {
      */
     @SubscribeEvent
     public void onServerTick(final TickEvent.ServerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END)
-            SleepingOverhaul.serverState.onServerTickPost();
+        //if (event.phase == TickEvent.Phase.END)
+        //    SleepingOverhaul.serverState.onServerTickPost();
     }
 }

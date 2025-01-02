@@ -47,6 +47,21 @@ dependencies {
     implementation 'com.electronwill.night-config:toml:3.6.3'
     modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"
     
+    //// Mod compatibilities
+    // JEI (for finding and giving mod-added stuff)
+    modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}")
+    modRuntimeOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
+    // Comforts 6.4.0 for Fabric (and Spectre lib)
+    modImplementation("curse.maven:comforts-276951:5503514")
+    modLocalRuntime("curse.maven:spectrelib-993948:5217601")
+    // Cardinal Components API needed for Comforts-Fabric
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.2.1"
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.2.1"
+    // Sleep Tight for Fabric 1.1.19 (and Moonlight Lib)
+    modImplementation("curse.maven:sleep-tight-817564:5085864")
+    modLocalRuntime("curse.maven:selene-499980:6034618")
+    
     // TODO
     // Runtime only mods
     // Catalogue (1.19+) or Mod Menu

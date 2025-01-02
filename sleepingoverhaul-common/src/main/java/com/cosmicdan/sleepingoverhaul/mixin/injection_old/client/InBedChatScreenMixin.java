@@ -1,4 +1,4 @@
-package com.cosmicdan.sleepingoverhaul.mixin.injection.client;
+package com.cosmicdan.sleepingoverhaul.mixin.injection_old.client;
 
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
 import com.cosmicdan.sleepingoverhaul.server.ServerState;
@@ -15,7 +15,6 @@ import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.InBedChatScreen;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -119,10 +118,9 @@ public abstract class InBedChatScreenMixin extends ChatScreen {
      * Sends our custom "really sleeping" packet to the server.
      */
     private void onClickSleep(final Level level) {
-        SleepingOverhaul.clientState.sleepButtonDisable();
         final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeBoolean(true);
-        NetworkManager.sendToServer(ServerState.PACKET_REALLY_SLEEPING, buf);
+        NetworkManager.sendToServer(SleepingOverhaul.PACKET_TRY_REALLY_SLEEPING, buf);
     }
 
 }

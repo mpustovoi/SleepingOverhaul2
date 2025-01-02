@@ -1,7 +1,6 @@
-package com.cosmicdan.sleepingoverhaul.mixin.injection.client;
+package com.cosmicdan.sleepingoverhaul.mixin.injection_old.client;
 
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
-import com.cosmicdan.sleepingoverhaul.client.ClientConfig;
 import com.cosmicdan.sleepingoverhaul.client.ClientConfig.TimelapseCameraType;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;

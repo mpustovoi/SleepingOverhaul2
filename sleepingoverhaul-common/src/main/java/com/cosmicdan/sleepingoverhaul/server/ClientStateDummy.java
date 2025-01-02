@@ -19,15 +19,10 @@ public class ClientStateDummy implements IClientState {
     public <T> void sleepButtonAssign(final T button) {}
 
     @Override
-    public void sleepButtonDisable() {}
+    public void sleepButtonCooldown() {};
 
     @Override
-    public void doSleepButtonCooldown() {}
-
-    @Override
-    public void setTimelapseEnabled(boolean timelapseEnabled) {
-
-    }
+    public void setTimelapseEnabled(boolean timelapseEnabled) {}
 
     @Override
     public int getTimelapseCinematicStage() {

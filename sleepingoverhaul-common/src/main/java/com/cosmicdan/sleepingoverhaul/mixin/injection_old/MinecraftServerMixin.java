@@ -1,4 +1,4 @@
-package com.cosmicdan.sleepingoverhaul.mixin.injection;
+package com.cosmicdan.sleepingoverhaul.mixin.injection_old;
 
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;

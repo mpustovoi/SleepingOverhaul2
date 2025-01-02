@@ -6,4 +6,6 @@ package com.cosmicdan.sleepingoverhaul.mixin.proxy;
 public interface PlayerMixinProxy {
 
     void setReallySleeping(boolean isReallySleeping);
+
+    boolean isReallySleeping();
 }

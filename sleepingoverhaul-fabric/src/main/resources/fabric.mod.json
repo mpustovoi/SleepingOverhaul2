@@ -20,7 +20,7 @@
     ]
   },
   "mixins": [
-    "sleepingoverhaul.mixins.json",
+    "sleepingoverhaul-fabric.mixins.json",
     "sleepingoverhaul-common.mixins.json"
   ],
   "depends": {

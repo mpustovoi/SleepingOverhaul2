@@ -1,4 +1,4 @@
-package com.cosmicdan.sleepingoverhaul.mixin.injection;
+package com.cosmicdan.sleepingoverhaul.mixin.injection_old;
 
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.spongepowered.asm.mixin.Mixin;

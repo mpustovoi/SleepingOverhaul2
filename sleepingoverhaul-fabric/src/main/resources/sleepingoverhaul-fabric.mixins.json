@@ -1,11 +1,15 @@
 {
   "required": true,
+  "minVersion": "0.8",
   "package": "com.cosmicdan.sleepingoverhaul.fabric.mixin.injection",
   "compatibilityLevel": "JAVA_17",
-  "plugin" : "com.cosmicdan.sleepingoverhaul.fabric.mixin.MixinPluginFabric",
+  "mixins": [
+    "BedRestMixinsFabricServerPlayer",
+    "BedRestMixinsFabricPlayer"
+  ],
   "client": [
   ],
-  "mixins": [
+  "server":[
   ],
   "injectors": {
     "defaultRequire": 1

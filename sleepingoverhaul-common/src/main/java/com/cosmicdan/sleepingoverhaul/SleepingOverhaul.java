@@ -10,6 +10,7 @@ import dev.architectury.event.EventResult;
 import dev.architectury.event.events.common.EntityEvent;
 import dev.architectury.platform.Platform;
 import dev.architectury.utils.Env;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,6 +29,10 @@ public class SleepingOverhaul {
 
     public static ServerConfig serverConfig = null;
     public static ClientConfig clientConfig = null;
+
+    public static final ResourceLocation PACKET_TRY_REALLY_SLEEPING = new ResourceLocation(SleepingOverhaul.MOD_ID, "is_really_sleeping");
+    public static final ResourceLocation PACKET_SLEEPERROR_TIME = new ResourceLocation(SleepingOverhaul.MOD_ID, "sleep_error_time");
+    public static final ResourceLocation PACKET_TIMELAPSE_CHANGE = new ResourceLocation(SleepingOverhaul.MOD_ID, "timelapse_change");
 
     //public static void init() {
     @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
