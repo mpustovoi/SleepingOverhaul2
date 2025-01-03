@@ -85,7 +85,7 @@ public abstract class ServerLevelMixin extends Level implements WorldGenLevel {
     }
 
     public final void resetWeatherCycleIfNeeded() {
-        if (getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE) && isRaining() && SleepingOverhaul.serverConfig.morningResetWeather.get())
+        if (getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE) && isRaining() && SleepingOverhaul.serverConfig.resetWeatherOnWake.get())
             resetWeatherCycle();
     }
 

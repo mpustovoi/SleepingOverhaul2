@@ -8,7 +8,6 @@ import dev.architectury.networking.NetworkManager.PacketContext;
 import dev.architectury.networking.NetworkManager.Side;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.InBedChatScreen;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -38,7 +37,7 @@ public class ClientState implements IClientState {
     private void recvTimelapseChange(final FriendlyByteBuf buf, final PacketContext context) {
         //final Player player = context.getPlayer();
         final boolean timelapseEnabled = buf.readBoolean();
-        setTimelapseEnabled(timelapseEnabled);
+        setTimelapseCamera(context.getPlayer(), timelapseEnabled);
     }
 
     private void recvTrySleepBounce(final FriendlyByteBuf buf, final PacketContext context) {
@@ -47,6 +46,13 @@ public class ClientState implements IClientState {
         if (!reallySleeping) {
             player.displayClientMessage(Component.translatable("gui.sleepingoverhaul.sleepNotPossibleNow"), true);
             ((PlayerMixinProxy) player).setReallySleeping(false);
+            // re-enable sleep button after 2 seconds
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    sleepButtonEnable(true);
+                }
+            }, 2000);
         }
     }
 
@@ -70,39 +76,14 @@ public class ClientState implements IClientState {
     }
 
     @Override
-    public void sleepButtonCooldown() {
-        if (sleepButton != null) {
-            sleepButton.active = false;
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    if (sleepButton != null)
-                        sleepButton.active = true;
-                }
-            }, 3000);
-        }
-    };
-
-    @Override
-    public void setTimelapseEnabled(final boolean timelapseEnabled) {
-        if (timelapseEnabled) {
+    public void setTimelapseCamera(Player player, final boolean timelapseEnabled) {
+        if (timelapseEnabled && player.isSleeping()) { //
             Minecraft.getInstance().gameRenderer.setPanoramicMode(true);
             if (timelapseCinematicStage == 0)
                 timelapseCinematicStage = 1;
         } else {
             Minecraft.getInstance().gameRenderer.setPanoramicMode(false);
             timelapseCinematicStage = 3;
-        }
-
-        // also update timelapse screen
-        if (Minecraft.getInstance().screen != null) {
-            if (Minecraft.getInstance().screen instanceof InBedChatScreen screenBedChat) {
-                //((InBedChatScreenProxy) screenBedChat).onTimelapseChange(timelapseEnabled);
-                if (timelapseEnabled) {
-                    // timelapse started, remove the buttons
-                    removeBedScreenButtons();
-                }
-            }
         }
     }
 
@@ -120,17 +101,17 @@ public class ClientState implements IClientState {
     }
 
     @Override
-    public void removeBedScreenButtons() {
-        if (leaveButton != null)
-            leaveButton.visible = false;
+    public void sleepButtonEnable(boolean enable) {
         if (sleepButton != null)
-            sleepButton.visible = false;
+            sleepButton.active = enable;
     }
 
+    /*
     @Override
     public void onSleepingCheck(final boolean isInBed) {
         // if player is not in bed, ensure cinematic is not active
         if (!isInBed && (timelapseCinematicStage != 0))
             timelapseCinematicStage = 0;
     }
+     */
 }

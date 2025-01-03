@@ -1,6 +1,6 @@
 package com.cosmicdan.sleepingoverhaul;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * @author Daniel 'CosmicDan' Connolly
@@ -12,15 +12,13 @@ public interface IClientState {
 
     <T> void sleepButtonAssign(T buttonRaw);
 
-    void sleepButtonCooldown();
-
-    void setTimelapseEnabled(boolean timelapseEnabled);
+    void setTimelapseCamera(Player player, boolean timelapseEnabled);
 
     int getTimelapseCinematicStage();
 
     void advanceTimelapseCinematicStage();
 
-    void removeBedScreenButtons();
+    void sleepButtonEnable(boolean enable);
 
-    void onSleepingCheck(boolean isInBed);
+    //void onSleepingCheck(boolean isInBed);
 }

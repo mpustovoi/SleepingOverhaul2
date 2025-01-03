@@ -3,7 +3,6 @@ package com.cosmicdan.sleepingoverhaul.server;
 import com.cosmicdan.sleepingoverhaul.ModPlatform;
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
 import com.cosmicdan.sleepingoverhaul.mixin.proxy.PlayerMixinProxy;
-import com.google.common.graph.Network;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.networking.NetworkManager.Side;
 import io.netty.buffer.Unpooled;
@@ -30,6 +29,28 @@ public class ServerState {
         NetworkManager.registerReceiver(Side.C2S, SleepingOverhaul.PACKET_TRY_REALLY_SLEEPING, this::tryReallySleepingRecv);
     }
 
+    public boolean isTimelapseActive() {
+        return timelapseEnd > -1;
+    }
+
+    public boolean didTickTimelapse(ServerLevel serverLevel, long currentTime, long targetTime) {
+        if (timelapseEnd == -1) {
+            // start timelapse
+            // we need to remember the initial targetTime, otherwise timelapse continues forever
+            timelapseEnd = targetTime;
+            notifyPlayersTimelapseChange(serverLevel.players(), true);
+            onTimelapseStart();
+        } else if (currentTime >= timelapseEnd) {
+            stopTimelapseNow(serverLevel);
+        }
+        return timelapseEnd > -1;
+    }
+
+    public void onServerTickPost() {
+        if ((timelapseEnd > -1) && SleepingOverhaul.serverConfig.logTimelapsePerformanceStats.get())
+            timelapseTickCount++;
+    }
+
     public void onTimelapseStart() {
         if (SleepingOverhaul.serverConfig.logTimelapsePerformanceStats.get()) {
             timelapseStartNanos = Util.getNanos();
@@ -45,10 +66,41 @@ public class ServerState {
         }
     }
 
-    public void onServerTickPost() {
-        if ((timelapseEnd > 0) && SleepingOverhaul.serverConfig.logTimelapsePerformanceStats.get())
-            timelapseTickCount++;
+    private void tryReallySleepingRecv(FriendlyByteBuf buf, NetworkManager.PacketContext context) {
+        final Player player = context.getPlayer();
+        boolean reallySleeping = buf.readBoolean();
+        if (reallySleeping && ModPlatform.canPlayerSleepNow(player)) {
+            //noinspection CastToIncompatibleInterface
+            ((PlayerMixinProxy) player).setReallySleeping(reallySleeping);
+        } else {
+            reallySleeping = false;
+        }
+        if (player instanceof ServerPlayer serverPlayer) {
+            if (!reallySleeping) {
+                final FriendlyByteBuf bufPong = new FriendlyByteBuf(Unpooled.buffer());
+                bufPong.writeBoolean(false);
+                NetworkManager.sendToPlayer(serverPlayer, SleepingOverhaul.PACKET_TRY_REALLY_SLEEPING, bufPong);
+            }
+        } else {
+            SleepingOverhaul.LOGGER.warn("The player instance received from packet is not ServerPlayer, eh? Forge/Fabric changed stuf? Client screen-dim will be bugged...");
+        }
     }
+
+    private void notifyPlayersTimelapseChange(final Iterable<ServerPlayer> players, final boolean timelapseActive) {
+        final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+        buf.writeBoolean(timelapseActive);
+        NetworkManager.sendToPlayers(players, SleepingOverhaul.PACKET_TIMELAPSE_CHANGE, buf);
+    }
+
+    public void stopTimelapseNow(ServerLevel serverLevel) {
+        if (isTimelapseActive()) {
+            timelapseEnd = -1;
+            notifyPlayersTimelapseChange(serverLevel.players(), false);
+            onTimelapseEnd();
+        }
+    }
+
+    // ------------ OLD BELOW
 
     public boolean tickTimelapse(ServerLevel level) {
         boolean timelapseActive = true;
@@ -71,40 +123,7 @@ public class ServerState {
     public static long getNextMorning(ServerLevel level) {
         final long oneDayAhead = level.getLevelData().getDayTime() + Level.TICKS_PER_DAY;
         final long nextMorning = oneDayAhead - (oneDayAhead % Level.TICKS_PER_DAY); // next multiple of 24000 = 06:00
-        // calculate the tick offset according to config
-        /*
-        final int nextMorningHourOffset = (-6 + SleepingOverhaul.CONFIG_SERVER.morningHour.get()) * 1000;
-        final int nextMorningMinuteOffset = Math.round(SleepingOverhaul.CONFIG_SERVER.morningMinute.get() * (1000 / 60.0f));
-        final int nextMorningOffset = nextMorningHourOffset + nextMorningMinuteOffset;
-        return nextMorning + nextMorningOffset;
-         */
         return nextMorning;
-    }
-
-    private void notifyPlayersTimelapseChange(final Iterable<ServerPlayer> players, final boolean timelapseActive) {
-        final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        buf.writeBoolean(timelapseActive);
-        NetworkManager.sendToPlayers(players, SleepingOverhaul.PACKET_TIMELAPSE_CHANGE, buf);
-    }
-
-    private void tryReallySleepingRecv(FriendlyByteBuf buf, NetworkManager.PacketContext context) {
-        final Player player = context.getPlayer();
-        boolean reallySleeping = buf.readBoolean();
-        if (reallySleeping && ModPlatform.canPlayerSleepNow(player)) {
-            //noinspection CastToIncompatibleInterface
-            ((PlayerMixinProxy) player).setReallySleeping(reallySleeping);
-        } else {
-            reallySleeping = false;
-        }
-        if (player instanceof ServerPlayer serverPlayer) {
-            if (!reallySleeping) {
-                final FriendlyByteBuf bufPong = new FriendlyByteBuf(Unpooled.buffer());
-                bufPong.writeBoolean(false);
-                NetworkManager.sendToPlayer(serverPlayer, SleepingOverhaul.PACKET_TRY_REALLY_SLEEPING, bufPong);
-            }
-        } else {
-            SleepingOverhaul.LOGGER.warn("The player instance received from packet is not ServerPlayer, eh? Forge/Fabric changed stuf? Client screen-dim will be bugged...");
-        }
     }
 
     public void onBeforeTickTime(ServerLevel level) {

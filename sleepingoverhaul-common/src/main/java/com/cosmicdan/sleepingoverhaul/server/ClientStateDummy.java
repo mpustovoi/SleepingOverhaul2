@@ -1,6 +1,7 @@
 package com.cosmicdan.sleepingoverhaul.server;
 
 import com.cosmicdan.sleepingoverhaul.IClientState;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * @author Daniel 'CosmicDan' Connolly
@@ -19,10 +20,7 @@ public class ClientStateDummy implements IClientState {
     public <T> void sleepButtonAssign(final T button) {}
 
     @Override
-    public void sleepButtonCooldown() {};
-
-    @Override
-    public void setTimelapseEnabled(boolean timelapseEnabled) {}
+    public void setTimelapseCamera(Player player, boolean timelapseEnabled) {}
 
     @Override
     public int getTimelapseCinematicStage() {
@@ -33,8 +31,8 @@ public class ClientStateDummy implements IClientState {
     public void advanceTimelapseCinematicStage() {}
 
     @Override
-    public void removeBedScreenButtons() {}
+    public void sleepButtonEnable(boolean enable) {}
 
-    @Override
-    public void onSleepingCheck(boolean isInBed) {}
+    //@Override
+    //public void onSleepingCheck(boolean isInBed) {}
 }

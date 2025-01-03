@@ -17,8 +17,8 @@ public class ServerConfig {
     //private static final String morningHourTxt = " The hour of day to consider as 'morning' (for waking players)";
     //public final ForgeConfigSpec.IntValue morningMinute;
     //private static final String morningMinuteTxt = " The minute of day to consider as 'morning', past the hour (for waking players)";
-    public final ForgeConfigSpec.BooleanValue morningResetWeather;
-    private static final String morningResetWeatherTxt = " Reset the weather on morning (when players wake) if raining.";
+    public final ForgeConfigSpec.BooleanValue resetWeatherOnWake;
+    private static final String resetWeatherOnWakeTxt = " Reset the weather if raining when players wake. Applies to any bed and any SleepAction except Nothing.";
 
     private static final String sectionTimelapse = "timelapse";
     public final ForgeConfigSpec.EnumValue<AttackedWhileSleepingAction> sleepAttackedAction;
@@ -68,9 +68,9 @@ public class ServerConfig {
                 .defineInRange("morningMinute", 0, 0, 59);
 
          */
-        morningResetWeather = builder
-                .comment(morningResetWeatherTxt)
-                .define("morningResetWeather", true);
+        resetWeatherOnWake = builder
+                .comment(resetWeatherOnWakeTxt)
+                .define("resetWeatherOnWake", false);
         builder.pop();
 
 

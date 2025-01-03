@@ -38,7 +38,8 @@ public class SleepingOverhaulForge {
 
     @SubscribeEvent
     public void onSleepFinishedTimeEvent(final SleepFinishedTimeEvent event) {
-        SleepingOverhaul.LOGGER.info("~ Fired: SleepFinishedTimeEvent");
+        // TODO: This is fired constantly during timelapse
+        //SleepingOverhaul.LOGGER.info("~ Fired: SleepFinishedTimeEvent");
     }
 
     /**
@@ -46,7 +47,7 @@ public class SleepingOverhaulForge {
      */
     @SubscribeEvent
     public void onServerTick(final TickEvent.ServerTickEvent event) {
-        //if (event.phase == TickEvent.Phase.END)
-        //    SleepingOverhaul.serverState.onServerTickPost();
+        if (event.phase == TickEvent.Phase.END)
+            SleepingOverhaul.serverState.onServerTickPost();
     }
 }
