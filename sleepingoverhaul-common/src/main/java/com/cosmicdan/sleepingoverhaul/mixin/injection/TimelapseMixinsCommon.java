@@ -10,7 +10,6 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.SleepStatus;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
@@ -92,7 +91,7 @@ abstract class TimelapseMixinsCommonServerLevel extends Level {
                     so2_$resetWeatherCycleIfNeeded();
                 }
             }
-            case SkipToDay -> {
+            case SkipTime -> {
                 original.call(instance, targetTime);
                 wakeUpAllPlayers();
                 so2_$resetWeatherCycleIfNeeded();

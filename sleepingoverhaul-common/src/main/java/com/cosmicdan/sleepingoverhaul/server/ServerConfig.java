@@ -12,7 +12,7 @@ public class ServerConfig {
     public final ForgeConfigSpec.EnumValue<SleepAction> sleepAction;
     private static final String sleepActionTxt = " The action to perform when all players are sleeping";
     public final ForgeConfigSpec.BooleanValue resetWeatherOnWake;
-    private static final String resetWeatherOnWakeTxt = " Reset the weather if raining when players wake. Applies to any bed and any SleepAction except Nothing.";
+    private static final String resetWeatherOnWakeTxt = " Reset the weather if raining when players wake. Applies to Timelapse and SkipTime.";
 
     private static final String sectionTimelapse = "timelapse";
     private static final String sectionTimelapseTxt = " Features for the Timelapse sleepAction";
@@ -92,7 +92,7 @@ public class ServerConfig {
 
     public enum SleepAction {
         Timelapse,
-        SkipToDay,
+        SkipTime,
         Nothing
     }
 
