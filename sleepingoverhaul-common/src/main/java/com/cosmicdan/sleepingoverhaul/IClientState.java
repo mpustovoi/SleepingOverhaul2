@@ -18,7 +18,7 @@ public interface IClientState {
 
     void advanceTimelapseCinematicStage();
 
-    void sleepButtonEnable(boolean enable);
+    boolean isTimelapseCinematicActive();
 
-    //void onSleepingCheck(boolean isInBed);
+    void sleepButtonEnable(boolean enable);
 }

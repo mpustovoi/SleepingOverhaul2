@@ -101,17 +101,13 @@ public class ClientState implements IClientState {
     }
 
     @Override
+    public boolean isTimelapseCinematicActive() {
+        return timelapseCinematicStage != 0;
+    }
+
+    @Override
     public void sleepButtonEnable(boolean enable) {
         if (sleepButton != null)
             sleepButton.active = enable;
     }
-
-    /*
-    @Override
-    public void onSleepingCheck(final boolean isInBed) {
-        // if player is not in bed, ensure cinematic is not active
-        if (!isInBed && (timelapseCinematicStage != 0))
-            timelapseCinematicStage = 0;
-    }
-     */
 }

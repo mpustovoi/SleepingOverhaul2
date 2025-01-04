@@ -31,8 +31,8 @@ public class ClientStateDummy implements IClientState {
     public void advanceTimelapseCinematicStage() {}
 
     @Override
-    public void sleepButtonEnable(boolean enable) {}
+    public boolean isTimelapseCinematicActive() {return false;}
 
-    //@Override
-    //public void onSleepingCheck(boolean isInBed) {}
+    @Override
+    public void sleepButtonEnable(boolean enable) {}
 }

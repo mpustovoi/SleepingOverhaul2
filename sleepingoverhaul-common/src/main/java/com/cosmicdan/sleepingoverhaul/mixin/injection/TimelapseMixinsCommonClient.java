@@ -2,9 +2,14 @@ package com.cosmicdan.sleepingoverhaul.mixin.injection;
 
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
 import com.cosmicdan.sleepingoverhaul.client.ClientConfig;
+import com.cosmicdan.sleepingoverhaul.server.ServerConfig;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
@@ -74,5 +79,22 @@ abstract class TimelapseMixinsCommonClientCamera {
             Minecraft.getInstance().gameRenderer.setPanoramicMode(false);
             SleepingOverhaul.clientState.advanceTimelapseCinematicStage();
         }
+    }
+}
+
+@Mixin(Gui.class)
+abstract class TimelapseMixinsCommonClientGui {
+    @WrapOperation(
+            method = "render",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getSleepTimer()I")
+    )
+    private int onRenderGetSleepTimer(LocalPlayer instance, Operation<Integer> original) {
+        if (SleepingOverhaul.serverConfig.sleepAction.get() == ServerConfig.SleepAction.Timelapse) {
+            if (SleepingOverhaul.clientState.isTimelapseCinematicActive()) {
+                // Use user-specified screen dim value
+                return SleepingOverhaul.clientConfig.timelapseDimValue.get();
+            }
+        }
+        return original.call(instance);
     }
 }
