@@ -10,9 +10,12 @@ import net.minecraft.Util;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.SleepStatus;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 /**
  * @author Daniel 'CosmicDan' Connolly
@@ -105,53 +108,9 @@ public class ServerState {
         }
     }
 
-    // ------------ OLD BELOW
-
-    public boolean tickTimelapse(ServerLevel level) {
-        boolean timelapseActive = true;
-        if (timelapseEnd == -1) {
-            // timelapse has just started
-            notifyPlayersTimelapseChange(level.players(), true);
-            timelapseEnd = getNextMorning(level);
-            onTimelapseStart();
-        } else if (timelapseEnd == -2) {
-            // timelapse has reached its target tick
-            timelapseActive = false;
-            notifyPlayersTimelapseChange(level.players(), false);
-            timelapseEnd = -1;
-            onTimelapseEnd();
-        }
-
-        return timelapseActive;
-    }
-
-    public static long getNextMorning(ServerLevel level) {
-        final long oneDayAhead = level.getLevelData().getDayTime() + Level.TICKS_PER_DAY;
-        final long nextMorning = oneDayAhead - (oneDayAhead % Level.TICKS_PER_DAY); // next multiple of 24000 = 06:00
-        return nextMorning;
-    }
-
-    public void onBeforeTickTime(ServerLevel level) {
-        //System.out.println(getDayTime() + ">=" + SleepingOverhaul.timelapseEnd);
-        if (timelapseEnd > 0) {
-            // timelapse is currently active
-            if (level.getDayTime() >= timelapseEnd) {
-                timelapseEnd = -2;
-            }
-        }
-    }
-
-    public boolean shouldPreventLivingTravel() {
-        return (SleepingOverhaul.serverConfig.disableLivingEntityTravel.get() && (timelapseEnd > 0));
-    }
-
-    public boolean timelapsePending() {
-        return timelapseEnd > 0;
-    }
-
     public float getPlayerHurtAdj(ServerPlayer player, DamageSource source, float amount) {
         float amountAdjusted = amount;
-        if (timelapsePending()) {
+        if (isTimelapseActive()) {
             // timelapse active and player was attacked
             if (SleepingOverhaul.serverConfig.sleepPreventMagicDamage.get() && source.isIndirect())
                 amountAdjusted = Float.NaN;
@@ -164,5 +123,13 @@ public class ServerState {
             }
         }
         return amountAdjusted;
+    }
+
+    public boolean shouldPreventLivingTravel() {
+        return (isTimelapseActive() && SleepingOverhaul.serverConfig.disableLivingEntityTravel.get());
+    }
+
+    public boolean shouldPreventNaturalSpawning() {
+        return (isTimelapseActive() && SleepingOverhaul.serverConfig.disableNaturalSpawning.get());
     }
 }

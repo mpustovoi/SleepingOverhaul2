@@ -8,7 +8,7 @@ import net.minecraftforge.common.ForgeConfigSpec.Builder;
  */
 public class ServerConfig {
     private static final String sectionGeneral = "general";
-    private static final String sectionGeneralTxt = " General features for the mod";
+    private static final String sectionGeneralTxt = " General features for the mod.";
     public final ForgeConfigSpec.EnumValue<SleepAction> sleepAction;
     private static final String sleepActionTxt = " The action to perform when all players are sleeping";
     public final ForgeConfigSpec.BooleanValue resetWeatherOnWake;
@@ -26,7 +26,7 @@ public class ServerConfig {
     private static final String disableNaturalSpawningTxt = " If true, natural spawning will be disabled during timelapse.\n" +
             " Gives a minor speed boost.";
     public final ForgeConfigSpec.BooleanValue disableLivingEntityTravel;
-    private static final String disableLivingEntityTravelTxt = " If true, LivingEntity type mobs will not travel during timelapse. Gives a minor speed boost.\n" +
+    private static final String disableLivingEntityTravelTxt = " If true, LivingEntity type mobs can not travel during timelapse. Gives a minor speed boost.\n" +
             " Disabled by default since it could result in undesired loss, e.g. mobs drowning.\n" +
             " Note that this does NOT seem to include Villager movement.";
     // disabled for now since it needs extra work (prevent wakeup is always-on)

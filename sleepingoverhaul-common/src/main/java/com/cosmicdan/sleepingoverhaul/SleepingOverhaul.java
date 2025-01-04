@@ -58,7 +58,7 @@ public class SleepingOverhaul {
 
     private static EventResult onLivingHurt(LivingEntity entity, DamageSource source, float amount) {
         EventResult eventResult = EventResult.pass(); // default = pass it on
-        if (serverState.timelapsePending()) {
+        if (serverState.isTimelapseActive()) {
             if (entity instanceof ServerPlayer player) {
                 if (! source.getMsgId().equals(TimelapseKillDamageSource.MSG_ID)) {
                     final float adjustedDamage = serverState.getPlayerHurtAdj(player, source, amount);
@@ -69,7 +69,7 @@ public class SleepingOverhaul {
                         // infinite = insta-kill configured
                         eventResult = EventResult.interruptFalse();
                         player.hurt(new TimelapseKillDamageSource(), Float.MAX_VALUE);
-                    }
+                    } // TODO: Else wake the player and stop timelapse...? Test it!
                 }
             }
         }

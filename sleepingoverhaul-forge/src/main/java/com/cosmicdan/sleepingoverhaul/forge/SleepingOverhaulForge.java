@@ -26,22 +26,6 @@ public class SleepingOverhaulForge {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    //@SubscribeEvent
-    //public void onSleepingTimeCheck(final SleepingTimeCheckEvent event) {
-        //SleepingOverhaul.LOGGER.info("~ Fired: SleepingTimeCheckEvent");
-    //}
-
-    //@SubscribeEvent
-    //public void onPlayerSleepInBedEvent(final PlayerSleepInBedEvent event) {
-    //    SleepingOverhaul.LOGGER.info("~ Fired: PlayerSleepInBedEvent");
-    //}
-
-    @SubscribeEvent
-    public void onSleepFinishedTimeEvent(final SleepFinishedTimeEvent event) {
-        // TODO: This is fired constantly during timelapse
-        //SleepingOverhaul.LOGGER.info("~ Fired: SleepFinishedTimeEvent");
-    }
-
     /**
      * Only used for performance counting stats right now
      */

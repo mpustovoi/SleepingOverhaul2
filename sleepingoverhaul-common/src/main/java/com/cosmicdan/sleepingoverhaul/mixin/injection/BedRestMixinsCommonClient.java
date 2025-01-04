@@ -89,6 +89,7 @@ abstract class BedRestMixinsCommonClientInBedChatScreen extends ChatScreen {
     private void onClickSleep(final Level level) {
         SleepingOverhaul.clientState.sleepButtonEnable(false);
         final LocalPlayer player = Minecraft.getInstance().player;
+        // Assume really-sleeping works so the client can update immediately; the server will bounce back if it fails.
         ((PlayerMixinProxy) player).setReallySleeping(true);
         final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeBoolean(true);
