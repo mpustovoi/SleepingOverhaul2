@@ -75,14 +75,19 @@ public class ServerState {
         } else {
             reallySleeping = false;
         }
-        if (player instanceof ServerPlayer serverPlayer) {
+        if (player instanceof ServerPlayer serverPlayer) { // should always be true
             if (!reallySleeping) {
                 final FriendlyByteBuf bufPong = new FriendlyByteBuf(Unpooled.buffer());
                 bufPong.writeBoolean(false);
                 NetworkManager.sendToPlayer(serverPlayer, SleepingOverhaul.PACKET_TRY_REALLY_SLEEPING, bufPong);
+            } else {
+                if (SleepingOverhaul.serverConfig.bedRestEnabled.get()) {
+                    // Update sleeping list because we've made it check for reallySleeping in BedRestMixinsCommonSleepStatus
+                    serverPlayer.serverLevel().updateSleepingPlayerList();
+                }
             }
         } else {
-            SleepingOverhaul.LOGGER.warn("The player instance received from packet is not ServerPlayer, eh? Forge/Fabric changed stuf? Client screen-dim will be bugged...");
+            SleepingOverhaul.LOGGER.warn("The player instance received from packet is not ServerPlayer, eh? Forge/Fabric changed stuff? Bed rest will be bugged...!");
         }
     }
 

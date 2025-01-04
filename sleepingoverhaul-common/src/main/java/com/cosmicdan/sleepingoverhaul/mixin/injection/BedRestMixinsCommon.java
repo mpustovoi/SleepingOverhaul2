@@ -2,10 +2,12 @@ package com.cosmicdan.sleepingoverhaul.mixin.injection;
 
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
 import com.cosmicdan.sleepingoverhaul.mixin.proxy.PlayerMixinProxy;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.server.players.SleepStatus;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.ForgeConfigSpec;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -39,9 +41,10 @@ abstract class BedRestMixinsCommonPlayer implements PlayerMixinProxy {
 
     @Inject(
             method = "stopSleepInBed",
-            at = @At("RETURN")
+            at = @At("HEAD")
     )
     private void onStopSleepInBed(boolean wakeImmediately, boolean updateLevelForSleepingPlayers, CallbackInfo ci) {
+        // Called on both server and client, no need for a packet
         setReallySleeping(false);
     }
 
@@ -53,5 +56,22 @@ abstract class BedRestMixinsCommonPlayer implements PlayerMixinProxy {
     @Override
     public final boolean isReallySleeping() {
         return reallySleeping;
+    }
+}
+
+@Mixin(SleepStatus.class)
+abstract class BedRestMixinsCommonSleepStatus {
+
+    @WrapOperation(
+            method = "update",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;isSleeping()Z")
+    )
+    private boolean onUpdateIsSleepingCheck(ServerPlayer serverPlayer, Operation<Boolean> original) {
+        if (SleepingOverhaul.serverConfig.bedRestEnabled.get()) {
+            // MULTIPLAYER-ONLY: Check for reallySleeping instead so announcements don't mistakenly fire on Bed Rest
+            return ((PlayerMixinProxy) serverPlayer).isReallySleeping();
+        } else {
+            return original.call(serverPlayer);
+        }
     }
 }
