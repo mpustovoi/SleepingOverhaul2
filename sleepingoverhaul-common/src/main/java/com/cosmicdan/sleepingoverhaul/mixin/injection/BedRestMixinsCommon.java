@@ -3,7 +3,9 @@ package com.cosmicdan.sleepingoverhaul.mixin.injection;
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
 import com.cosmicdan.sleepingoverhaul.mixin.proxy.PlayerMixinProxy;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.ForgeConfigSpec;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,8 +29,9 @@ abstract class BedRestMixinsCommonPlayer implements PlayerMixinProxy {
     private void afterSleepCounterIncrement(CallbackInfo ci) {
         if (SleepingOverhaul.serverConfig.bedRestEnabled.get()) {
             if (!isReallySleeping()) {
-                if (sleepCounter > 50) {
-                    sleepCounter = 50;
+                final int dimScreenValue = SleepingOverhaul.serverConfig.bedRestScreenDimValue.get();
+                if (sleepCounter > dimScreenValue) {
+                    sleepCounter = dimScreenValue;
                 }
             }
         }

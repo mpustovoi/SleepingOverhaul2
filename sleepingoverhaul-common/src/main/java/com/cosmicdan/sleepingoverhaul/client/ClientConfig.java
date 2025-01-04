@@ -11,11 +11,10 @@ public class ClientConfig {
     private static final String timelapseCameraTypeTxt = " The action to perform when all players are sleeping";
 
     public ClientConfig(final ForgeConfigSpec.Builder builder) {
-        builder.push(sectionGeneral); // TODO: test translation key...?
+        builder.push(sectionGeneral);
 
         timelapseCameraType = builder
                 .comment(timelapseCameraTypeTxt)
-                //.translation("config.sleepingoverhaul.sleepAction") // TODO: what's the point of translation if only comment is used?
                 .defineEnum("timelapseCameraType", TimelapseCameraType.SurfaceOrbit);
         builder.pop();
     }
