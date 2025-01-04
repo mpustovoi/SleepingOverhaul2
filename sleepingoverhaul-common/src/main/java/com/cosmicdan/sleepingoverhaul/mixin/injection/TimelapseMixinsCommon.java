@@ -3,6 +3,7 @@ package com.cosmicdan.sleepingoverhaul.mixin.injection;
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
@@ -14,6 +15,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.DimensionType;
@@ -25,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -107,7 +110,33 @@ abstract class TimelapseMixinsCommonServerLevel extends Level {
         // Do nothing (never wake players here), we do it ourselves at the appropriate time
     }
 
-    // TODO: Move to another "Features" Mixin
+    /**
+     * For feature to prevent spawns during timelapse
+     */
+    @Inject(
+            method = "isNaturalSpawningAllowed(Lnet/minecraft/core/BlockPos;)Z",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    public final void onNaturalSpawnCheckBlockPos(final BlockPos blockPos, final CallbackInfoReturnable<Boolean> cir) {
+        if (SleepingOverhaul.serverConfig.disableNaturalSpawning.get() && (SleepingOverhaul.serverState.timelapsePending()))
+            cir.setReturnValue(false);
+    }
+
+    /**
+     * For feature to prevent spawns during timelapse
+     */
+    @Inject(
+            method = "isNaturalSpawningAllowed(Lnet/minecraft/world/level/ChunkPos;)Z",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    public final void onNaturalSpawnCheckChunk(ChunkPos chunkPoss, final CallbackInfoReturnable<Boolean> cir) {
+        if (SleepingOverhaul.serverConfig.disableNaturalSpawning.get() && (SleepingOverhaul.serverState.timelapsePending()))
+            cir.setReturnValue(false);
+    }
+
+    // TODO: Move to "GeneralMixinsCommonServerLevel"
     @WrapOperation(
             method = "tick(Ljava/util/function/BooleanSupplier;)V",
             at = @At(value = "INVOKE", ordinal = 1, target = "net/minecraft/world/level/GameRules.getBoolean (Lnet/minecraft/world/level/GameRules$Key;)Z"),
@@ -121,7 +150,7 @@ abstract class TimelapseMixinsCommonServerLevel extends Level {
         }
     }
 
-    // TODO: Move to another "Features" Mixin, goes with above
+    // TODO: Move to "GeneralMixinsCommonServerLevel" (as above)
     @Unique
     public void so2_$resetWeatherCycleIfNeeded() {
         if (getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE) && isRaining() && SleepingOverhaul.serverConfig.resetWeatherOnWake.get())
@@ -134,9 +163,6 @@ abstract class TimelapseMixinsCommonServerLevel extends Level {
     )
     public boolean onAreEnoughSleeping(SleepStatus instance, int requiredSleepPercentage, Operation<Boolean> original) {
         // MULTIPLAYER ONLY: Ensure timelapse is NOT enabled if enough players are not sleeping
-        // TODO: This is not right. We need to check "deep" sleeping instead.
-        // TODO: Modify (Redirect) the invocation from target method to check for deep sleeping instead (if both timelapse and bedrest is enabled). Keep it in the Timelapse Mixin class though.
-        // TODO: Actually test multiplayer stuff.
         final boolean areEnoughSleeping = original.call(instance, requiredSleepPercentage);
         if (!areEnoughSleeping) {
             SleepingOverhaul.serverState.stopTimelapseNow(getLevel());
@@ -166,5 +192,4 @@ abstract class TimelapseMixinsCommonPlayer extends LivingEntity {
         // CLIENT-ONLY - Stop cinematic
         SleepingOverhaul.clientState.setTimelapseCamera((Player) (Object) this, true);
     }
-
 }
