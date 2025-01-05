@@ -16,17 +16,14 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.WritableLevelData;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -73,15 +70,6 @@ abstract class TimelapseMixinsCommonServerLevel extends Level {
     @Shadow
     public abstract ServerLevel getLevel();
 
-    @Redirect(
-            method = "tick(Ljava/util/function/BooleanSupplier;)V",
-            at = @At(value = "INVOKE", target = "net/minecraft/server/level/ServerLevel.wakeUpAllPlayers ()V"),
-            require = 1, allow = 1
-    )
-    public final void onWakeUpAllPlayers(ServerLevel self) {
-        // Do nothing (never wake players here), we do it ourselves at the appropriate time
-    }
-
     /**
      * For feature to prevent spawns during timelapse
      */
@@ -114,6 +102,8 @@ abstract class TimelapseMixinsCommonServerLevel extends Level {
     )
     public boolean onAreEnoughSleeping(SleepStatus instance, int requiredSleepPercentage, Operation<Boolean> original) {
         // MULTIPLAYER ONLY: Ensure timelapse is disabled if not enough players are sleeping
+        // Note that we can keep the check for regular sleep since BedRestMixinsCommonSleepStatus#onUpdateIsSleepingCheck
+        // changes the counter to check for reallySleeping (also Multiplayer-only).
         final boolean areEnoughSleeping = original.call(instance, requiredSleepPercentage);
         if (!areEnoughSleeping && SleepingOverhaul.serverConfig.sleepAction.get() == ServerConfig.SleepAction.Timelapse) {
             SleepingOverhaul.serverState.stopTimelapseNow(getLevel());

@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.function.Supplier;
 
@@ -54,6 +55,15 @@ abstract class CoreMixinsCommonServerLevel extends Level {
                 // do nothing
             }
         }
+    }
+
+    @Redirect(
+            method = "tick(Ljava/util/function/BooleanSupplier;)V",
+            at = @At(value = "INVOKE", target = "net/minecraft/server/level/ServerLevel.wakeUpAllPlayers ()V"),
+            require = 1, allow = 1
+    )
+    public final void onWakeUpAllPlayers(ServerLevel self) {
+        // Do nothing (never wake players here), we do it ourselves at the appropriate time
     }
 
     @WrapOperation(
