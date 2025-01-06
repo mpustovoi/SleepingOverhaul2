@@ -130,17 +130,13 @@ abstract class TimelapseMixinsCommonPlayer extends LivingEntity {
         at = @At(value = "RETURN")
     )
     public void onStopSleepInBed(boolean wakeImmediately, boolean updateLevelForSleepingPlayers, CallbackInfo ci) {
-        MinecraftServer server = getServer();
-        if (server != null) {
-            if (server.isSingleplayer()) {
-                if (level() instanceof ServerLevel serverLevel)
-                    SleepingOverhaul.serverState.stopTimelapseNow(serverLevel);
-                // Client-only but no need for check since Server just has ClientStateDummy
-                SleepingOverhaul.clientState.setTimelapseCamera((Player) (Object) this, false);
+        if (level() instanceof ServerLevel serverLevel) {
+            if (getServer().isSingleplayer()) {
+                SleepingOverhaul.serverState.stopTimelapseNow(serverLevel);
             }
-        } else {
-            throw new RuntimeException("Server instance is null, wut? Tell CosmicDan to fix this!");
         }
+        // Client-only but no need for check since Server just has ClientStateDummy
+        SleepingOverhaul.clientState.setTimelapseCamera((Player) (Object) this, false);
     }
 }
 
