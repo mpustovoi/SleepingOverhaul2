@@ -32,6 +32,6 @@ public class SleepingOverhaulForge {
     @SubscribeEvent
     public void onServerTick(final TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END)
-            SleepingOverhaul.serverState.onServerTickPost();
+            SleepingOverhaul.serverState.onServerTickPost(event.getServer());
     }
 }

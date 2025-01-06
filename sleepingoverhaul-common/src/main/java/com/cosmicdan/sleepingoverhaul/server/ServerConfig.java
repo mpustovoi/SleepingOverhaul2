@@ -16,10 +16,6 @@ public class ServerConfig {
 
     private static final String sectionTimelapse = "timelapse";
     private static final String sectionTimelapseTxt = " Features for the Timelapse sleepAction";
-    public final ForgeConfigSpec.EnumValue<AttackedWhileSleepingAction> sleepAttackedAction;
-    private static final String sleepAttackedActionTxt = " The action to perform on a player if they are attacked during timelapse sleep, for damage sources that do *not* match any preventions below.";
-    public final ForgeConfigSpec.BooleanValue sleepPreventMagicDamage;
-    private static final String sleepPreventMagicDamageTxt = " If true, damage type of 'Magic' (pre-1.19.4) or 'Indirect' (1.19.4+) will not apply to players during timelapse. This includes DoT's like Poison.";
     public final ForgeConfigSpec.BooleanValue logTimelapsePerformanceStats;
     private static final String logTimelapsePerformanceStatsTxt = " If true, will performance stats will be logged on timelapse end (average TPS, total time, total ticks)";
     public final ForgeConfigSpec.BooleanValue disableNaturalSpawning;
@@ -39,6 +35,19 @@ public class ServerConfig {
     public final ForgeConfigSpec.IntValue bedRestScreenDimValue;
     private static final String bedRestScreenDimValueTxt = " How much to dim the screen when bed resting. A value below 10 or so will effectively disable the dim.";
 
+    private static final String sectionBedEffectsAndDamage = "bedEffectsAndDamage";
+    private static final String sectionBedEffectsAndDamageTxt = " Customize damage/effect modifiers while in bed. Note that the player will always be kicked out of bed if any damage is allowed to happen.";
+    public final ForgeConfigSpec.EnumValue<AttackedWhileSleepingAction> sleepDirectDamageAction;
+    private static final String sleepDirectDamageActionTxt = " The action to perform on a player if they are attacked with DIRECT damage (not a potion/effect) during bed rest or timelapse.";
+    public final ForgeConfigSpec.BooleanValue bedEffectNoPoison;
+    private static final String bedEffectNoPoisonTxt = " If enabled, poison will not harm the player during bed rest or timelapse.";
+    public final ForgeConfigSpec.BooleanValue bedEffectNoWither;
+    private static final String bedEffectNoWitherTxt = " If enabled, wither will not harm the player during bed rest or timelapse.";
+    public final ForgeConfigSpec.BooleanValue bedEffectNoHunger;
+    private static final String bedEffectNoHungerTxt = " If enabled, hunger (effect) will not apply to the player during bed rest or timelapse.";
+
+
+
     public ServerConfig(final Builder builder) {
         builder.push(sectionGeneral).comment(sectionGeneralTxt);
 
@@ -51,12 +60,6 @@ public class ServerConfig {
         builder.pop();
 
         builder.push(sectionTimelapse).comment(sectionTimelapseTxt);
-        sleepAttackedAction = builder
-                .comment(sleepAttackedActionTxt)
-                .defineEnum("sleepAttackedAction", AttackedWhileSleepingAction.NoChange);
-        sleepPreventMagicDamage = builder
-                .comment(sleepPreventMagicDamageTxt)
-                .define("sleepPreventMagicDamage", false);
         logTimelapsePerformanceStats = builder
                 .comment(logTimelapsePerformanceStatsTxt)
                 .define("logTimelapsePerformanceStats", true);
@@ -79,6 +82,21 @@ public class ServerConfig {
                 .comment(bedRestScreenDimValueTxt)
                 // must be between 1 and 98 because 0 means "awake", 100+ means "deep sleeping", and we need to reserve max+1 for the "isSleeping" multiplayer check
                 .defineInRange("bedRestScreenDimValue", 30, 1, 98);
+        builder.pop();
+
+        builder.push(sectionBedEffectsAndDamage).comment(sectionBedEffectsAndDamageTxt);
+        sleepDirectDamageAction = builder
+                .comment(sleepDirectDamageActionTxt)
+                .defineEnum("sleepDirectDamageAction", AttackedWhileSleepingAction.NoChange);
+        bedEffectNoPoison = builder
+                .comment(bedEffectNoPoisonTxt)
+                .define("bedEffectNoPoison", true);
+        bedEffectNoWither = builder
+                .comment(bedEffectNoWitherTxt)
+                .define("bedEffectNoWither", true);
+        bedEffectNoHunger = builder
+                .comment(bedEffectNoHungerTxt)
+                .define("bedEffectNoHunger", true);
         builder.pop();
     }
 

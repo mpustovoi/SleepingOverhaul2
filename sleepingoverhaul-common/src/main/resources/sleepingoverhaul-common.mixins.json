@@ -10,7 +10,8 @@
     "BedRestMixinsCommonSleepStatus",
     "TimelapseMixinsCommonMinecraftServer",
     "TimelapseMixinsCommonServerLevel",
-    "TimelapseMixinsCommonPlayer"
+    "TimelapseMixinsCommonPlayer",
+    "BedEffectsCommonMobEffect"
   ],
   "client": [
     "BedRestMixinsCommonClientInBedChatScreen",

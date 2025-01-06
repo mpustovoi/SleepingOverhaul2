@@ -18,7 +18,7 @@ public class SleepingOverhaulFabric implements ModInitializer {
          * Only used for performance counting stats right now
          */
         ServerTickEvents.END_SERVER_TICK.register((final MinecraftServer server) -> {
-            SleepingOverhaul.serverState.onServerTickPost();
+            SleepingOverhaul.serverState.onServerTickPost(server);
         });
     }
 }

@@ -7,11 +7,19 @@ import dev.architectury.networking.NetworkManager;
 import dev.architectury.networking.NetworkManager.Side;
 import io.netty.buffer.Unpooled;
 import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.Optional;
 
 /**
  * @author Daniel 'CosmicDan' Connolly
@@ -46,9 +54,28 @@ public class ServerState {
         return timelapseEnd > -1;
     }
 
-    public void onServerTickPost() {
+    public void onServerTickPost(MinecraftServer server) {
         if ((timelapseEnd > -1) && SleepingOverhaul.serverConfig.logTimelapsePerformanceStats.get())
             timelapseTickCount++;
+        // DEV TEST ONLY: Spawn a Zombie on top of player at first midnight
+        if (false) {
+            if (server.overworld().getDayTime() == 18000) {
+                final Optional<ServerPlayer> firstPlayerMaybe = server.getPlayerList().getPlayers().stream().findFirst();
+                if (firstPlayerMaybe.isPresent()) {
+                    final BlockPos firstPlayerPosAbove = firstPlayerMaybe.get().getOnPos().above(2);
+                    EntityType.ZOMBIE.spawn(server.overworld(), firstPlayerPosAbove, MobSpawnType.SPAWNER);
+                }
+            }
+        }
+        // DEV TEST ONLY: Apply poison to player at first midnight
+        if (false) {
+            if (server.overworld().getDayTime() == 18000) {
+                final Optional<ServerPlayer> firstPlayerMaybe = server.getPlayerList().getPlayers().stream().findFirst();
+                if (firstPlayerMaybe.isPresent()) {
+                    firstPlayerMaybe.get().addEffect(new MobEffectInstance(new MobEffectInstance(MobEffects.POISON, 1000, 3)));
+                }
+            }
+        }
     }
 
     public void onTimelapseStart() {
@@ -108,11 +135,9 @@ public class ServerState {
     public float getPlayerHurtAdj(ServerPlayer player, DamageSource source, float amount) {
         float amountAdjusted = amount;
         if (isTimelapseActive()) {
-            // timelapse active and player was attacked
-            if (SleepingOverhaul.serverConfig.sleepPreventMagicDamage.get() && source.isIndirect())
-                amountAdjusted = Float.NaN;
-            else {
-                switch (SleepingOverhaul.serverConfig.sleepAttackedAction.get()) {
+            if (!source.isIndirect()) {
+                // timelapse active and player was attacked by direct damage
+                switch (SleepingOverhaul.serverConfig.sleepDirectDamageAction.get()) {
                     case NoChange -> {}
                     case InstantKill -> amountAdjusted = Float.POSITIVE_INFINITY;
                     case Invincible -> amountAdjusted = Float.NaN;

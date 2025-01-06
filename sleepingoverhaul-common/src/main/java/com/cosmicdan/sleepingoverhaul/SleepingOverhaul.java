@@ -68,7 +68,8 @@ public class SleepingOverhaul {
                         // infinite = insta-kill configured
                         eventResult = EventResult.interruptFalse();
                         player.hurt(new TimelapseKillDamageSource(), Float.MAX_VALUE);
-                    } // TODO: Else wake the player and stop timelapse...? Test it!
+                    }
+                    // Note: Player will always leave bed if they receive any damage;
                 }
             }
         }
