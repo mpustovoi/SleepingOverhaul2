@@ -142,6 +142,8 @@ public class ServerState {
                     case InstantKill -> amountAdjusted = Float.POSITIVE_INFINITY;
                     case Invincible -> amountAdjusted = Float.NaN;
                 }
+            } else if (!player.isSleeping() && SleepingOverhaul.serverConfig.noDamageToNonSleepers.get()) {
+                amountAdjusted = Float.NaN;
             }
         }
         return amountAdjusted;

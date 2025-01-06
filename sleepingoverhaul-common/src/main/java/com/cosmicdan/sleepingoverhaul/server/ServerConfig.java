@@ -18,6 +18,8 @@ public class ServerConfig {
     private static final String sectionTimelapseTxt = " Features for the Timelapse sleepAction";
     public final ForgeConfigSpec.BooleanValue logTimelapsePerformanceStats;
     private static final String logTimelapsePerformanceStatsTxt = " If true, will performance stats will be logged on timelapse end (average TPS, total time, total ticks)";
+    public final ForgeConfigSpec.BooleanValue noDamageToNonSleepers;
+    private static final String noDamageToNonSleepersTxt = " For multiplayer. If true, players NOT sleeping will be invincible during Timelapse.";
     public final ForgeConfigSpec.BooleanValue disableNaturalSpawning;
     private static final String disableNaturalSpawningTxt = " If true, natural spawning will be disabled during timelapse.\n" +
             " Gives a minor speed boost.";
@@ -63,6 +65,10 @@ public class ServerConfig {
         logTimelapsePerformanceStats = builder
                 .comment(logTimelapsePerformanceStatsTxt)
                 .define("logTimelapsePerformanceStats", true);
+        noDamageToNonSleepers = builder
+                .comment(noDamageToNonSleepersTxt)
+                .define("noDamageToNonSleepers", true);
+
         disableNaturalSpawning = builder
                 .comment(disableNaturalSpawningTxt)
                 .define("disableNaturalSpawning", true);
