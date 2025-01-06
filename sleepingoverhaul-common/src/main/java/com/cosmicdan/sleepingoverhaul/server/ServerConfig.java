@@ -38,7 +38,7 @@ public class ServerConfig {
     private static final String sectionBedEffectsAndDamage = "bedEffectsAndDamage";
     private static final String sectionBedEffectsAndDamageTxt = " Customize damage/effect modifiers while in bed. Note that the player will always be kicked out of bed if any damage is allowed to happen.";
     public final ForgeConfigSpec.EnumValue<AttackedWhileSleepingAction> sleepDirectDamageAction;
-    private static final String sleepDirectDamageActionTxt = " The action to perform on a player if they are attacked with DIRECT damage (not a potion/effect) during bed rest or timelapse.";
+    private static final String sleepDirectDamageActionTxt = " The action to perform on a SLEEPING player if they are attacked with DIRECT damage (not a potion/effect) during bed rest or timelapse.";
     public final ForgeConfigSpec.BooleanValue bedEffectNoPoison;
     private static final String bedEffectNoPoisonTxt = " If enabled, poison will not harm the player during bed rest or timelapse.";
     public final ForgeConfigSpec.BooleanValue bedEffectNoWither;

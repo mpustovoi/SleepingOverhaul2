@@ -135,7 +135,7 @@ public class ServerState {
     public float getPlayerHurtAdj(ServerPlayer player, DamageSource source, float amount) {
         float amountAdjusted = amount;
         if (isTimelapseActive()) {
-            if (!source.isIndirect()) {
+            if (!source.isIndirect() && player.isSleeping()) {
                 // timelapse active and player was attacked by direct damage
                 switch (SleepingOverhaul.serverConfig.sleepDirectDamageAction.get()) {
                     case NoChange -> {}
