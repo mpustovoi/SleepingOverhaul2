@@ -17,7 +17,8 @@
   "client": [
     "BedRestMixinsCommonClientInBedChatScreen",
     "TimelapseMixinsCommonClientCamera",
-    "TimelapseMixinsCommonClientGui"
+    "TimelapseMixinsCommonClientGui",
+    "TimelapseMixinsCommonClientLocalPlayer"
   ],
   "server":[
   ],

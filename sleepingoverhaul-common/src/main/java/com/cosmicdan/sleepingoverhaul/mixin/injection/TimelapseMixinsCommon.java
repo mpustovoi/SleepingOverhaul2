@@ -2,6 +2,7 @@ package com.cosmicdan.sleepingoverhaul.mixin.injection;
 
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
 import com.cosmicdan.sleepingoverhaul.server.ServerConfig;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.core.BlockPos;
@@ -12,6 +13,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.players.SleepStatus;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -141,7 +143,11 @@ abstract class TimelapseMixinsCommonPlayer extends LivingEntity {
 }
 
 @Mixin(LivingEntity.class)
-abstract class TimelapseMixinsCommonLivingEntity {
+abstract class TimelapseMixinsCommonLivingEntity extends Entity {
+    public TimelapseMixinsCommonLivingEntity(EntityType<?> entityType, Level level) {
+        super(entityType, level);
+    }
+
     /**
      * For feature to prevent LivingEntity travel during timelapse
      */
@@ -150,8 +156,21 @@ abstract class TimelapseMixinsCommonLivingEntity {
             at = @At("HEAD"),
             cancellable = true
     )
-    public final void onTravel(Vec3 vec3, CallbackInfo ci) {
-        if (SleepingOverhaul.serverState.shouldPreventLivingTravel())
+    private void onTravel(Vec3 vec3, CallbackInfo ci) {
+        //noinspection ConstantValue
+        if (SleepingOverhaul.serverState.shouldPreventLivingTravel() && !((Object) this instanceof Player))
             ci.cancel();
+    }
+
+    @WrapMethod(
+            method = "isImmobile"
+    )
+    private boolean onIsImmobileCheck(Operation<Boolean> original) {
+        if (SleepingOverhaul.serverState.isTimelapseActive() && SleepingOverhaul.serverConfig.noMovementDuringTimelapse.get()) {
+            if ((Object) this instanceof Player) {
+                return true;
+            }
+        }
+        return original.call();
     }
 }

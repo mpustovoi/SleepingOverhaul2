@@ -20,13 +20,15 @@ public class ServerConfig {
     private static final String logTimelapsePerformanceStatsTxt = " If true, will performance stats will be logged on timelapse end (average TPS, total time, total ticks)";
     public final ForgeConfigSpec.BooleanValue noDamageToNonSleepers;
     private static final String noDamageToNonSleepersTxt = " For multiplayer. If true, players NOT sleeping will be invincible during Timelapse.";
+    public final ForgeConfigSpec.BooleanValue noMovementDuringTimelapse;
+    private static final String noMovementDuringTimelapseTxt = " For multiplayer. If true, all players (even those not sleeping) will be unable to move during Timelapse.";
     public final ForgeConfigSpec.BooleanValue disableNaturalSpawning;
     private static final String disableNaturalSpawningTxt = " If true, natural spawning will be disabled during timelapse.\n" +
             " Gives a minor speed boost.";
     public final ForgeConfigSpec.BooleanValue disableLivingEntityTravel;
     private static final String disableLivingEntityTravelTxt = " If true, LivingEntity type mobs can not travel during timelapse. Gives a minor speed boost.\n" +
             " Disabled by default since it could result in undesired loss, e.g. mobs drowning.\n" +
-            " Note that this does NOT seem to include Villager movement.";
+            " Note that this won't apply to players, see noMovementDuringTimelapse for stopping player movement.";
 
     private static final String sectionBedrest = "bedRest";
     private static final String sectionBedrestTxt = " Toggle and customize the Bed Rest feature here";
@@ -71,7 +73,9 @@ public class ServerConfig {
         noDamageToNonSleepers = builder
                 .comment(noDamageToNonSleepersTxt)
                 .define("noDamageToNonSleepers", true);
-
+        noMovementDuringTimelapse = builder
+                .comment(noMovementDuringTimelapseTxt)
+                .define("noDamageToNonSleepers", true);
         disableNaturalSpawning = builder
                 .comment(disableNaturalSpawningTxt)
                 .define("disableNaturalSpawning", true);
