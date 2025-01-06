@@ -45,7 +45,7 @@ public class ServerState {
             // start timelapse
             // we need to remember the initial targetTime, otherwise timelapse could continue forever
             timelapseEnd = targetTime;
-            notifyPlayersTimelapseChange(serverLevel.players(), true);
+            notifyPlayersTimelapseChange(serverLevel.players(), timelapseEnd);
             onTimelapseStart();
         } else if (currentTime >= timelapseEnd) {
             // stop timelapse
@@ -118,16 +118,16 @@ public class ServerState {
         }
     }
 
-    private void notifyPlayersTimelapseChange(final Iterable<ServerPlayer> players, final boolean timelapseActive) {
+    private void notifyPlayersTimelapseChange(final Iterable<ServerPlayer> players, final long timelapseEnd) {
         final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        buf.writeBoolean(timelapseActive);
+        buf.writeLong(timelapseEnd);
         NetworkManager.sendToPlayers(players, SleepingOverhaul.PACKET_TIMELAPSE_CHANGE, buf);
     }
 
     public void stopTimelapseNow(ServerLevel serverLevel) {
         if (isTimelapseActive()) {
             timelapseEnd = -1;
-            notifyPlayersTimelapseChange(serverLevel.players(), false);
+            notifyPlayersTimelapseChange(serverLevel.players(), timelapseEnd);
             onTimelapseEnd();
         }
     }
@@ -155,5 +155,12 @@ public class ServerState {
 
     public boolean shouldPreventNaturalSpawning() {
         return (isTimelapseActive() && SleepingOverhaul.serverConfig.disableNaturalSpawning.get());
+    }
+
+    /**
+     * Called on the client to sync the value from server
+     */
+    public void setTimelapseEndForClient(long timelapseEndIn) {
+        timelapseEnd = timelapseEndIn;
     }
 }

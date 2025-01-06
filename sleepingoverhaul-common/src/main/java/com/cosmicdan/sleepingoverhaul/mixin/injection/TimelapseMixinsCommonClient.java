@@ -111,8 +111,11 @@ abstract class TimelapseMixinsCommonClientGui {
 }
 
 @Mixin(LocalPlayer.class)
-abstract class TimelapseMixinsCommonClientLocalPlayer { // TODO: Enable this
+abstract class TimelapseMixinsCommonClientLocalPlayer {
 
+    /**
+     * For option to prevent non-player movement during timelapse
+     */
     @WrapOperation(
             method = "aiStep",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/Input;tick(ZF)V")

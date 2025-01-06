@@ -8,9 +8,11 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.SleepStatus;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
@@ -161,16 +163,24 @@ abstract class TimelapseMixinsCommonLivingEntity extends Entity {
         if (SleepingOverhaul.serverState.shouldPreventLivingTravel() && !((Object) this instanceof Player))
             ci.cancel();
     }
+}
 
+/**
+ * For preventing non-sleeping player movement during timelapse if enabled. For server only.
+ */
+@Mixin(ServerGamePacketListenerImpl.class)
+abstract class TimelapseMixinsCommonServerGamePacketListenerImpl {
+    /**
+     * Server-side for MP to prevent exploits. Client-side block is at TimelapseMixinsCommonClientLocalPlayer
+     */
     @WrapMethod(
-            method = "isImmobile"
+            method = "handleMovePlayer"
     )
-    private boolean onIsImmobileCheck(Operation<Boolean> original) {
+    private void onHandleMovePlayer(ServerboundMovePlayerPacket packet, Operation<Void> original) {
         if (SleepingOverhaul.serverState.isTimelapseActive() && SleepingOverhaul.serverConfig.noMovementDuringTimelapse.get()) {
-            if ((Object) this instanceof Player) {
-                return true;
-            }
+            // do nothing
+        } else {
+            original.call(packet);
         }
-        return original.call();
     }
 }

@@ -21,7 +21,7 @@ public class ServerConfig {
     public final ForgeConfigSpec.BooleanValue noDamageToNonSleepers;
     private static final String noDamageToNonSleepersTxt = " For multiplayer. If true, players NOT sleeping will be invincible during Timelapse.";
     public final ForgeConfigSpec.BooleanValue noMovementDuringTimelapse;
-    private static final String noMovementDuringTimelapseTxt = " For multiplayer. If true, all players (even those not sleeping) will be unable to move during Timelapse.";
+    private static final String noMovementDuringTimelapseTxt = " For multiplayer. If true, non-sleeping players will be unable to move during timelapse.";
     public final ForgeConfigSpec.BooleanValue disableNaturalSpawning;
     private static final String disableNaturalSpawningTxt = " If true, natural spawning will be disabled during timelapse.\n" +
             " Gives a minor speed boost.";
@@ -75,7 +75,7 @@ public class ServerConfig {
                 .define("noDamageToNonSleepers", true);
         noMovementDuringTimelapse = builder
                 .comment(noMovementDuringTimelapseTxt)
-                .define("noDamageToNonSleepers", true);
+                .define("noMovementDuringTimelapse", true);
         disableNaturalSpawning = builder
                 .comment(disableNaturalSpawningTxt)
                 .define("disableNaturalSpawning", true);

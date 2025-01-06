@@ -12,6 +12,7 @@
     "TimelapseMixinsCommonLivingEntity",
     "TimelapseMixinsCommonMinecraftServer",
     "TimelapseMixinsCommonPlayer",
+    "TimelapseMixinsCommonServerGamePacketListenerImpl",
     "TimelapseMixinsCommonServerLevel"
   ],
   "client": [

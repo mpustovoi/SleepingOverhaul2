@@ -36,8 +36,10 @@ public class ClientState implements IClientState {
 
     private void recvTimelapseChange(final FriendlyByteBuf buf, final PacketContext context) {
         //final Player player = context.getPlayer();
-        final boolean timelapseEnabled = buf.readBoolean();
-        setTimelapseCamera(context.getPlayer(), timelapseEnabled);
+        final long timelapseEnd = buf.readLong();
+        setTimelapseCamera(context.getPlayer(), timelapseEnd > -1);
+        // also update serverState on the client side
+        SleepingOverhaul.serverState.setTimelapseEndForClient(timelapseEnd);
     }
 
     private void recvTrySleepBounce(final FriendlyByteBuf buf, final PacketContext context) {
