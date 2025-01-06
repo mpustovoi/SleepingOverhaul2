@@ -137,7 +137,7 @@ public class ServerState {
         if (isTimelapseActive()) {
             if (!source.isIndirect() && player.isSleeping()) {
                 // timelapse active and player was attacked by direct damage
-                switch (SleepingOverhaul.serverConfig.sleepDirectDamageAction.get()) {
+                switch (SleepingOverhaul.serverConfig.timelapseSleepersDirectDamageAction.get()) {
                     case NoChange -> {}
                     case InstantKill -> amountAdjusted = Float.POSITIVE_INFINITY;
                     case Invincible -> amountAdjusted = Float.NaN;
