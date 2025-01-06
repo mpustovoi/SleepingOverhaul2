@@ -50,6 +50,16 @@ public class ServerConfig {
     public final ForgeConfigSpec.BooleanValue bedEffectNoHunger;
     private static final String bedEffectNoHungerTxt = " If enabled, hunger (effect) will not apply to the player during bed rest or timelapse.";
 
+    private static final String sectionFeatures = "features";
+    private static final String sectionFeaturesTxt = " Other features";
+    public final ForgeConfigSpec.BooleanValue featureAllowAnyDimension;
+    private static final String featureAllowAnyDimensionTxt = " If enabled, allows resting/sleeping in any dimension. Will also disable explosion on use.\n" +
+            " IMPORTANT - This will ONLY apply with vanilla and vanilla-like beds! Will not change spawn in other dimensions unless featureSetSpawnAnyDimension is also enabled.";
+    public final ForgeConfigSpec.BooleanValue featureSetSpawnAnyDimension;
+    private static final String featureSetSpawnAnyDimensionTxt = " If enabled, resting/sleeping in a non-overworld bed will ALSO set the spawn to that bed.\n" +
+            " IMPORTANT - it will *overwrite* the overworld spawn point; it will NOT set per-dimension spawn points!\n" +
+            " Again, this will probably only apply to vanilla and vanilla-like beds.";
+
 
 
     public ServerConfig(final Builder builder) {
@@ -107,6 +117,15 @@ public class ServerConfig {
         bedEffectNoHunger = builder
                 .comment(bedEffectNoHungerTxt)
                 .define("bedEffectNoHunger", true);
+        builder.pop();
+
+        builder.push(sectionFeatures).comment(sectionFeaturesTxt);
+        featureAllowAnyDimension = builder
+                .comment(featureAllowAnyDimensionTxt)
+                .define("featureAllowAnyDimension", false);
+        featureSetSpawnAnyDimension = builder
+                .comment(featureSetSpawnAnyDimensionTxt)
+                .define("featureSetSpawnAnyDimension", false);
         builder.pop();
     }
 
