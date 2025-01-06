@@ -2,7 +2,6 @@ package com.cosmicdan.sleepingoverhaul.mixin.injection;
 
 import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
 import com.cosmicdan.sleepingoverhaul.mixin.proxy.PlayerMixinProxy;
-import com.cosmicdan.sleepingoverhaul.server.ServerState;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import dev.architectury.networking.NetworkManager;
@@ -41,9 +40,8 @@ abstract class BedRestMixinsCommonClientInBedChatScreen extends ChatScreen {
         if (SleepingOverhaul.serverConfig.bedRestOnEnter.get()) {
             if (SleepingOverhaul.clientState.isSleepButtonActive()) {
                 if (input.getValue().isEmpty()) {
-                    // try to sleep if ENTER was pressed and there was no input (not just whitespace)
-                    if (minecraft != null)
-                        onClickSleep(minecraft.level);
+                    // try to sleep if ENTER was pressed and there was no input at all (not just whitespace)
+                    onClickSleep();
                 }
             }
         }
@@ -67,7 +65,7 @@ abstract class BedRestMixinsCommonClientInBedChatScreen extends ChatScreen {
 
                 final Button sleepButton = new Button.Builder(
                         Component.translatable("gui.sleepingoverhaul.sleepButton"),
-                        (Button button) -> onClickSleep(Minecraft.getInstance().level)
+                        (Button button) -> onClickSleep()
                 ).bounds((width / 2) + 5, buttonLeave.getY(), 100, 20
                 ).build();
 
@@ -83,10 +81,9 @@ abstract class BedRestMixinsCommonClientInBedChatScreen extends ChatScreen {
     }
 
     /**
-     * Hook action handler for when player presses Sleep.
-     * Sends our custom "really sleeping" packet to the server.
+     * Action handler for Sleep
      */
-    private void onClickSleep(final Level level) {
+    private void onClickSleep() {
         SleepingOverhaul.clientState.sleepButtonEnable(false);
         final LocalPlayer player = Minecraft.getInstance().player;
         // Assume really-sleeping works so the client can update immediately; the server will bounce back if it fails.

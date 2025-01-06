@@ -4,7 +4,6 @@ import com.cosmicdan.sleepingoverhaul.SleepingOverhaul;
 import com.cosmicdan.sleepingoverhaul.mixin.proxy.PlayerMixinProxy;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.SleepStatus;
 import net.minecraft.world.entity.player.Player;
@@ -19,11 +18,17 @@ public class BedRestMixinsCommon {}
 
 @Mixin(Player.class)
 abstract class BedRestMixinsCommonPlayer implements PlayerMixinProxy {
+    /**
+     * Flag used to confirm that the player has actually pressed Sleep and is not just Bed Resting
+     */
     private boolean reallySleeping = false;
 
     @Shadow
     private int sleepCounter;
 
+    /**
+     * Cap the screen dim value if Bed Resting. Not only for visual effect (client), but to prevent deepSleep status
+     */
     @Inject(
             method = "tick",
             at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Player;sleepCounter:I", opcode = Opcodes.PUTFIELD, ordinal = 0, shift = At.Shift.AFTER)
@@ -39,12 +44,14 @@ abstract class BedRestMixinsCommonPlayer implements PlayerMixinProxy {
         }
     }
 
+    /**
+     * On stop sleep, also update reallySleeping flag. Called on both server and client so no need for a packet here.
+     */
     @Inject(
             method = "stopSleepInBed",
             at = @At("HEAD")
     )
     private void onStopSleepInBed(boolean wakeImmediately, boolean updateLevelForSleepingPlayers, CallbackInfo ci) {
-        // Called on both server and client, no need for a packet
         setReallySleeping(false);
     }
 
@@ -62,13 +69,15 @@ abstract class BedRestMixinsCommonPlayer implements PlayerMixinProxy {
 @Mixin(SleepStatus.class)
 abstract class BedRestMixinsCommonSleepStatus {
 
+    /**
+     * For MP, check reallySleeping instead so announcements don't mistakenly fire on Bed Rest
+     */
     @WrapOperation(
             method = "update",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;isSleeping()Z")
     )
     private boolean onUpdateIsSleepingCheck(ServerPlayer serverPlayer, Operation<Boolean> original) {
         if (SleepingOverhaul.serverConfig.bedRestEnabled.get()) {
-            // MULTIPLAYER-ONLY: Check for reallySleeping instead so announcements don't mistakenly fire on Bed Rest
             return ((PlayerMixinProxy) serverPlayer).isReallySleeping();
         } else {
             return original.call(serverPlayer);

@@ -13,13 +13,17 @@ public class BedRestMixinsFabric {}
 
 @Mixin(ServerPlayer.class)
 abstract class BedRestMixinsFabricServerPlayer {
+
+    /**
+     * For Bed Rest, remove isDay check during tick. We perform the check later in ServerState#onReallySleepingRecv
+     */
     @WrapOperation(
             method = "startSleepInBed",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isDay()Z")
     )
     private boolean onIsDayCheck(Level instance, Operation<Boolean> original) {
         if (SleepingOverhaul.serverConfig.bedRestEnabled.get())
-            return false; // We do not re-fire this event on the client, since it's only used to kick the player out of bed
+            return false;
         else
             return original.call(instance);
     }
@@ -27,6 +31,9 @@ abstract class BedRestMixinsFabricServerPlayer {
 
 @Mixin(Player.class)
 abstract class BedRestMixinsFabricPlayer {
+    /**
+     * For Bed Rest, remove isDay check during tick. We perform the check later in ServerState#onReallySleepingRecv
+     */
     @WrapOperation(
             method = "tick",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isDay()Z")

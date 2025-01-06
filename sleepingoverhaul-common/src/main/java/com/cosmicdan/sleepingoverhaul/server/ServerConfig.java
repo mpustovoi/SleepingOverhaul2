@@ -29,11 +29,6 @@ public class ServerConfig {
     private static final String disableLivingEntityTravelTxt = " If true, LivingEntity type mobs can not travel during timelapse. Gives a minor speed boost.\n" +
             " Disabled by default since it could result in undesired loss, e.g. mobs drowning.\n" +
             " Note that this does NOT seem to include Villager movement.";
-    // disabled for now since it needs extra work (prevent wakeup is always-on)
-    //public final ForgeConfigSpec.BooleanValue timelapsePreventWakeup;
-    //private static final String timelapsePreventWakeupTxt = "Prevents players from waking up during timelapse (players will only wake when morning arrives)";
-    //public final ForgeConfigSpec.BooleanValue timelapsePreventMoving;
-    //private static final String timelapsePreventMovingTxt = "Prevents players from moving during timelapse (in case vote passes with some players awake)";
 
     private static final String sectionBedrest = "bedRest";
     private static final String sectionBedrestTxt = " Toggle and customize the Bed Rest feature here";
@@ -43,9 +38,6 @@ public class ServerConfig {
     private static final String bedRestOnEnterTxt = " Allows pressing Enter with no chat text to activate Sleep while resting. Requires the above bedRestEnabled to be true.";
     public final ForgeConfigSpec.IntValue bedRestScreenDimValue;
     private static final String bedRestScreenDimValueTxt = " How much to dim the screen when bed resting. A value below 10 or so will effectively disable the dim.";
-
-    //private static final String sectionRestrictions = "restrictions";
-    //public final ForgeConfigSpec.BooleanValue dayCheckOverride;
 
     public ServerConfig(final Builder builder) {
         builder.push(sectionGeneral).comment(sectionGeneralTxt);

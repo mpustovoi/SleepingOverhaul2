@@ -40,6 +40,9 @@ abstract class TimelapseMixinsCommonClientCamera {
 
     private double previousMaxHeight = -1.0;
 
+    /**
+     * For cinematic camera during Timelapse
+     */
     @SuppressWarnings("MethodWithTooManyParameters")
     @Inject(
             method = "setup",
@@ -84,6 +87,10 @@ abstract class TimelapseMixinsCommonClientCamera {
 
 @Mixin(Gui.class)
 abstract class TimelapseMixinsCommonClientGui {
+
+    /**
+     * For cinematic camera during Timelapse, use user-configured screen dim value
+     */
     @WrapOperation(
             method = "render",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getSleepTimer()I")
@@ -91,7 +98,6 @@ abstract class TimelapseMixinsCommonClientGui {
     private int onRenderGetSleepTimer(LocalPlayer instance, Operation<Integer> original) {
         if (SleepingOverhaul.serverConfig.sleepAction.get() == ServerConfig.SleepAction.Timelapse) {
             if (SleepingOverhaul.clientState.isTimelapseCinematicActive()) {
-                // Use user-specified screen dim value
                 return SleepingOverhaul.clientConfig.timelapseDimValue.get();
             }
         }

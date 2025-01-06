@@ -32,12 +32,14 @@ abstract class CoreMixinsCommonServerLevel extends Level {
 
     @Shadow protected abstract void resetWeatherCycle();
 
+    /**
+     * We perform the sleep action here so time can be captured, since other mods may have modified it (e.g. Hammocks)
+     */
     @WrapOperation(
             method = "tick",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setDayTime(J)V")
     )
     private void onSetDayTime(ServerLevel instance, long targetTime, Operation<Void> original) {
-        // We perform the sleep action here so we can capture the time, since other mods may have modified it (e.g. Hammocks)
         switch (SleepingOverhaul.serverConfig.sleepAction.get()) {
             case Timelapse -> {
                 final boolean hasTimelapseStopped = !SleepingOverhaul.serverState.didTickTimelapse(instance, getDayTime(), targetTime);
@@ -57,15 +59,25 @@ abstract class CoreMixinsCommonServerLevel extends Level {
         }
     }
 
+    @Unique
+    public void so2_$resetWeatherCycleIfNeeded() {
+        if (getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE) && isRaining() && SleepingOverhaul.serverConfig.resetWeatherOnWake.get())
+            resetWeatherCycle();
+    }
+
+    /**
+     * Do nothing (never wake players) here; we do it ourselves at the appropriate time
+     */
     @Redirect(
             method = "tick(Ljava/util/function/BooleanSupplier;)V",
             at = @At(value = "INVOKE", target = "net/minecraft/server/level/ServerLevel.wakeUpAllPlayers ()V"),
             require = 1, allow = 1
     )
-    public final void onWakeUpAllPlayers(ServerLevel self) {
-        // Do nothing (never wake players here), we do it ourselves at the appropriate time
-    }
+    public final void onWakeUpAllPlayers(ServerLevel self) {}
 
+    /**
+     * Do nothing (never reset weather) here; we do it ourselves at the appropriate time
+     */
     @WrapOperation(
             method = "tick(Ljava/util/function/BooleanSupplier;)V",
             at = @At(value = "INVOKE", ordinal = 1, target = "net/minecraft/world/level/GameRules.getBoolean (Lnet/minecraft/world/level/GameRules$Key;)Z"),
@@ -73,15 +85,9 @@ abstract class CoreMixinsCommonServerLevel extends Level {
     )
     public final boolean shouldGetBooleanGameRuleSecond(final GameRules gameRules, final GameRules.Key<GameRules.BooleanValue> key, Operation<Boolean> original) {
         if (key.equals(GameRules.RULE_WEATHER_CYCLE)) { // should always be true, we verify it anyway
-            return false; // Always false here, we reset weather ourselves at the appropriate time
+            return false;
         } else {
             throw new RuntimeException("Unexpected Minecraft code; the second GameRules.getBoolean call was not RULE_WEATHER_CYCLE! Mod conflict...?");
         }
-    }
-
-    @Unique
-    public void so2_$resetWeatherCycleIfNeeded() {
-        if (getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE) && isRaining() && SleepingOverhaul.serverConfig.resetWeatherOnWake.get())
-            resetWeatherCycle();
     }
 }

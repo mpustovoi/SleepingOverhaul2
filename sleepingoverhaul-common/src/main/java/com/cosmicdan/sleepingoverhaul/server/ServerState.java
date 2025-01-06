@@ -10,12 +10,8 @@ import net.minecraft.Util;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.players.SleepStatus;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-
-import java.util.List;
 
 /**
  * @author Daniel 'CosmicDan' Connolly
@@ -39,11 +35,12 @@ public class ServerState {
     public boolean didTickTimelapse(ServerLevel serverLevel, long currentTime, long targetTime) {
         if (timelapseEnd == -1) {
             // start timelapse
-            // we need to remember the initial targetTime, otherwise timelapse continues forever
+            // we need to remember the initial targetTime, otherwise timelapse could continue forever
             timelapseEnd = targetTime;
             notifyPlayersTimelapseChange(serverLevel.players(), true);
             onTimelapseStart();
         } else if (currentTime >= timelapseEnd) {
+            // stop timelapse
             stopTimelapseNow(serverLevel);
         }
         return timelapseEnd > -1;

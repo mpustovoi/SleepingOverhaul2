@@ -38,6 +38,9 @@ abstract class TimelapseMixinsCommonMinecraftServer {
 
     @Shadow protected abstract boolean haveTime();
 
+    /**
+     * Under Timelapse, tick server as many times as possible.
+     */
     @WrapOperation(
             method = "runServer()V",
             at = @At(value = "INVOKE", target = "net/minecraft/server/MinecraftServer.tickServer (Ljava/util/function/BooleanSupplier;)V"),
@@ -45,7 +48,6 @@ abstract class TimelapseMixinsCommonMinecraftServer {
     )
     public final void onCallTickServer(MinecraftServer self, BooleanSupplier haveTimeSupplier, Operation<Void> original) {
         if (SleepingOverhaul.serverState.isTimelapseActive()) {
-            // tick server as many times as possible
             while(haveTime()) {
                 tickServer(this::alwaysTrue);
             }
@@ -96,14 +98,16 @@ abstract class TimelapseMixinsCommonServerLevel extends Level {
             cir.setReturnValue(false);
     }
 
+    /**
+     * For MP, ensure timelapse is disabled if not enough players are sleeping
+     * Regarding Bed Rest, we still keep the check for regular sleep since BedRestMixinsCommonSleepStatus changes the
+     * counter to check for reallySleeping (also Multiplayer-only).
+     */
     @WrapOperation(
             method = "announceSleepStatus",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/SleepStatus;areEnoughSleeping(I)Z")
     )
     public boolean onAreEnoughSleeping(SleepStatus instance, int requiredSleepPercentage, Operation<Boolean> original) {
-        // MULTIPLAYER ONLY: Ensure timelapse is disabled if not enough players are sleeping
-        // Note that we can keep the check for regular sleep since BedRestMixinsCommonSleepStatus#onUpdateIsSleepingCheck
-        // changes the counter to check for reallySleeping (also Multiplayer-only).
         final boolean areEnoughSleeping = original.call(instance, requiredSleepPercentage);
         if (!areEnoughSleeping && SleepingOverhaul.serverConfig.sleepAction.get() == ServerConfig.SleepAction.Timelapse) {
             SleepingOverhaul.serverState.stopTimelapseNow(getLevel());
@@ -118,6 +122,9 @@ abstract class TimelapseMixinsCommonPlayer extends LivingEntity {
         super(entityType, level);
     }
 
+    /**
+     * For SP, immediately stop Timelapse and clear the camera
+     */
     @Inject(
         method = "stopSleepInBed",
         at = @At(value = "RETURN")
@@ -125,20 +132,22 @@ abstract class TimelapseMixinsCommonPlayer extends LivingEntity {
     public void onStopSleepInBed(boolean wakeImmediately, boolean updateLevelForSleepingPlayers, CallbackInfo ci) {
         MinecraftServer server = getServer();
         if (server != null) {
-            if (server.isSingleplayer() && level() instanceof ServerLevel serverLevel) {
-                // SINGLE-PLAYER ONLY: Immediately stop timelapse
-                SleepingOverhaul.serverState.stopTimelapseNow(serverLevel);
+            if (server.isSingleplayer()) {
+                if (level() instanceof ServerLevel serverLevel)
+                    SleepingOverhaul.serverState.stopTimelapseNow(serverLevel);
+                // Client-only but no need for check since Server just has ClientStateDummy
+                SleepingOverhaul.clientState.setTimelapseCamera((Player) (Object) this, false);
             }
+        } else {
+            throw new RuntimeException("Server instance is null, wut? Tell CosmicDan to fix this!");
         }
-        // CLIENT-ONLY - Stop cinematic
-        SleepingOverhaul.clientState.setTimelapseCamera((Player) (Object) this, true);
     }
 }
 
 @Mixin(LivingEntity.class)
 abstract class TimelapseMixinsCommonLivingEntity {
     /**
-     * For feature to prevent LivingEntity from travel during timelapse
+     * For feature to prevent LivingEntity travel during timelapse
      */
     @Inject(
             method = "travel(Lnet/minecraft/world/phys/Vec3;)V",
