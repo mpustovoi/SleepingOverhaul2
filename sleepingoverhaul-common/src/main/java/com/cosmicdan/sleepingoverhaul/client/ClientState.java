@@ -6,7 +6,6 @@ import com.cosmicdan.sleepingoverhaul.mixin.proxy.PlayerMixinProxy;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.networking.NetworkManager.PacketContext;
 import dev.architectury.networking.NetworkManager.Side;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -79,12 +78,10 @@ public class ClientState implements IClientState {
 
     @Override
     public void setTimelapseCamera(Player player, final boolean timelapseEnabled) {
-        if (timelapseEnabled && player.isSleeping()) { //
-            Minecraft.getInstance().gameRenderer.setPanoramicMode(true);
+        if (timelapseEnabled && player.isSleeping()) {
             if (timelapseCinematicStage == 0)
                 timelapseCinematicStage = 1;
         } else {
-            Minecraft.getInstance().gameRenderer.setPanoramicMode(false);
             timelapseCinematicStage = 3;
         }
     }
