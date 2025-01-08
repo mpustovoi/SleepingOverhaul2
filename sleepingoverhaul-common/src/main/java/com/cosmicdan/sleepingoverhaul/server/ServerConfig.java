@@ -17,11 +17,13 @@ public class ServerConfig {
     private static final String sectionTimelapse = "timelapse";
     private static final String sectionTimelapseTxt = " Features for the Timelapse sleepAction";
     public final ForgeConfigSpec.BooleanValue logTimelapsePerformanceStats;
-    private static final String logTimelapsePerformanceStatsTxt = " If true, will performance stats will be logged on timelapse end (average TPS, total time, total ticks)";
+    private static final String logTimelapsePerformanceStatsTxt = " If true, performance stats will be written to log on timelapse end (average TPS, total time, total ticks).";
     public final ForgeConfigSpec.BooleanValue noDamageToNonSleepers;
+    public final ForgeConfigSpec.EnumValue<AttackedWhileSleepingAction> timelapseSleepersDirectDamageAction;
+    private static final String timelapseSleepersDirectDamageActionTxt = " The action to perform on a SLEEPING if they are attacked with DIRECT damage (not a potion/effect) during timelapse. Doesn't apply to Bed Rest.";
     private static final String noDamageToNonSleepersTxt = " For multiplayer. If true, players NOT sleeping will be invincible during Timelapse.";
     public final ForgeConfigSpec.BooleanValue noMovementDuringTimelapse;
-    private static final String noMovementDuringTimelapseTxt = " For multiplayer. If true, non-sleeping players will be unable to move during timelapse.";
+    private static final String noMovementDuringTimelapseTxt = " For multiplayer. If true, players NOT sleeping will be unable to move during Timelapse.";
     public final ForgeConfigSpec.BooleanValue disableNaturalSpawning;
     private static final String disableNaturalSpawningTxt = " If true, natural spawning will be disabled during timelapse.\n" +
             " Gives a minor speed boost.";
@@ -37,12 +39,10 @@ public class ServerConfig {
     public final ForgeConfigSpec.BooleanValue bedRestOnEnter;
     private static final String bedRestOnEnterTxt = " Allows pressing Enter with no chat text to activate Sleep while resting. Requires the above bedRestEnabled to be true.";
     public final ForgeConfigSpec.IntValue bedRestScreenDimValue;
-    private static final String bedRestScreenDimValueTxt = " How much to dim the screen when bed resting. A value below 10 or so will effectively disable the dim.";
+    private static final String bedRestScreenDimValueTxt = " How much to dim the screen when bed resting. A value below 10 or so will effectively disable the dim. This cannot be a client option because the value is used server-side too.";
 
     private static final String sectionBedEffectsAndDamage = "bedEffectsAndDamage";
-    private static final String sectionBedEffectsAndDamageTxt = " Customize damage/effect modifiers while in bed. Note that the player will always be kicked out of bed if any damage is allowed to happen.";
-    public final ForgeConfigSpec.EnumValue<AttackedWhileSleepingAction> timelapseSleepersDirectDamageAction;
-    private static final String timelapseSleepersDirectDamageActionTxt = " The action to perform on a SLEEPING player if they are attacked with DIRECT damage (not a potion/effect) during bed rest or timelapse.";
+    private static final String sectionBedEffectsAndDamageTxt = " Customize damage/effect modifiers while bed resting or timelapse. Note that the player will always be kicked out of bed if any damage is allowed to happen.";
     public final ForgeConfigSpec.BooleanValue bedEffectNoPoison;
     private static final String bedEffectNoPoisonTxt = " If enabled, poison will not harm the player during bed rest or timelapse.";
     public final ForgeConfigSpec.BooleanValue bedEffectNoWither;

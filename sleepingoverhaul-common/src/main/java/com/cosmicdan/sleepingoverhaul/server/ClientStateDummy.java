@@ -35,4 +35,7 @@ public class ClientStateDummy implements IClientState {
 
     @Override
     public void sleepButtonEnable(boolean enable) {}
+
+    @Override
+    public void onClickSleep() {}
 }

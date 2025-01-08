@@ -21,4 +21,6 @@ public interface IClientState {
     boolean isTimelapseCinematicActive();
 
     void sleepButtonEnable(boolean enable);
+
+    void onClickSleep();
 }

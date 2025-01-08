@@ -6,7 +6,10 @@ import com.cosmicdan.sleepingoverhaul.mixin.proxy.PlayerMixinProxy;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.networking.NetworkManager.PacketContext;
 import dev.architectury.networking.NetworkManager.Side;
+import io.netty.buffer.Unpooled;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -108,5 +111,18 @@ public class ClientState implements IClientState {
     public void sleepButtonEnable(boolean enable) {
         if (sleepButton != null)
             sleepButton.active = enable;
+    }
+
+    @Override
+    public void onClickSleep() {
+        if (isSleepButtonActive()) {
+            SleepingOverhaul.clientState.sleepButtonEnable(false);
+            final LocalPlayer player = Minecraft.getInstance().player;
+            // Assume really-sleeping works so the client can update immediately; the server will bounce back if it fails.
+            ((PlayerMixinProxy) player).setReallySleeping(true);
+            final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+            buf.writeBoolean(true);
+            NetworkManager.sendToServer(SleepingOverhaul.PACKET_TRY_REALLY_SLEEPING, buf);
+        }
     }
 }
