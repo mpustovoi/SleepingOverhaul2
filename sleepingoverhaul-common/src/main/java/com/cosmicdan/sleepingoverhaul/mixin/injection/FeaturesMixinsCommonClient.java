@@ -109,7 +109,7 @@ abstract class FeaturesMixinsCommonClientInBedChatScreen extends ChatScreen {
                     // ENTER was pressed, handle chat
                     if (this.handleChatInput(this.input.getValue(), true)) {
                         // handle bedRestOnEnter config, because the hook from BedRestMixinsCommonClientInBedChatScreen is effectively replaced with this mixin
-                        if (input.getValue().isEmpty() && SleepingOverhaul.serverConfig.bedRestOnEnter.get())
+                        if (input.getValue().isEmpty() && SleepingOverhaul.clientConfig.bedRestOnEnter.get())
                             SleepingOverhaul.clientState.onClickSleep();
                         this.minecraft.setScreen(null);
                         this.input.setValue("");

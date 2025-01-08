@@ -36,8 +36,6 @@ public class ServerConfig {
     private static final String sectionBedrestTxt = " Toggle and customize the Bed Rest feature here";
     public final ForgeConfigSpec.BooleanValue bedRestEnabled;
     private static final String bedRestEnabledTxt = " Allows players to rest in a bed without sleeping, adding a 'Sleep' button next to 'Leave Bed'";
-    public final ForgeConfigSpec.BooleanValue bedRestOnEnter;
-    private static final String bedRestOnEnterTxt = " Allows pressing Enter with no chat text to activate Sleep while resting. Requires the above bedRestEnabled to be true.";
     public final ForgeConfigSpec.IntValue bedRestScreenDimValue;
     private static final String bedRestScreenDimValueTxt = " How much to dim the screen when bed resting. A value below 10 or so will effectively disable the dim. This cannot be a client option because the value is used server-side too.";
 
@@ -98,9 +96,6 @@ public class ServerConfig {
         bedRestEnabled = builder
                 .comment(bedRestEnabledTxt)
                 .define("bedRestEnabled", true);
-        bedRestOnEnter = builder
-                .comment(bedRestOnEnterTxt)
-                .define("bedRestWithChatEnter", true);
         bedRestScreenDimValue = builder
                 .comment(bedRestScreenDimValueTxt)
                 // must be between 1 and 98 because 0 means "awake", 100+ means "deep sleeping", and we need to reserve max+1 for the "isSleeping" multiplayer check

@@ -30,7 +30,7 @@ abstract class BedRestMixinsCommonClientInBedChatScreen extends ChatScreen {
             require = 1, allow = 1
     )
     public final void onClearChatEntry(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
-        if (SleepingOverhaul.serverConfig.bedRestOnEnter.get()) {
+        if (SleepingOverhaul.serverConfig.bedRestEnabled.get() && SleepingOverhaul.clientConfig.bedRestOnEnter.get()) {
             if (input.getValue().isEmpty()) {
                 // try to sleep if ENTER was pressed and there was no input at all (not just whitespace)
                 // Note that this only works if inBedChatFixesTxt is FALSE, otherwise we do it ourselves in FeaturesMixinsCommonClientInBedChatScreen

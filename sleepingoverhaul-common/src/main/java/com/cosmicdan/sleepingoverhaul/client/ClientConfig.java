@@ -12,6 +12,9 @@ public class ClientConfig {
     private static final String timelapseCameraTypeTxt = " Camera effect to use under Timelapse";
     public final ForgeConfigSpec.IntValue timelapseDimValue;
     private static final String timelapseDimValueTxt = " Screen dim to use under Timelapse. The default value of 0 will remove the screen dim.";
+    public final ForgeConfigSpec.BooleanValue bedRestOnEnter;
+    private static final String bedRestOnEnterTxt = " If enabled, pressing enter on In Bed Chat Screen with zero chat text will also function as Sleep button.\n" +
+            " Requires bedRestEnabled in server config, otherwise does nothing otherwise.";
     public final ForgeConfigSpec.BooleanValue inBedChatFixes;
     private static final String inBedChatFixesTxt = " Enhances/fixes keyboard-navigation issues on the In-Bed chat screen. Summary:\n" +
             "     - Allows to re-focus the chat box by clicking on it;\n" +
@@ -29,6 +32,9 @@ public class ClientConfig {
         timelapseDimValue = builder
                 .comment(timelapseDimValueTxt)
                 .defineInRange("timelapseDimValue", 0, 0, 100);
+        bedRestOnEnter = builder
+                .comment(bedRestOnEnterTxt)
+                .define("bedRestWithChatEnter", true);
         inBedChatFixes = builder
                 .comment(inBedChatFixesTxt)
                 .define("inBedChatFixes", true);
