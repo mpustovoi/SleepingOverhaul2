@@ -54,14 +54,13 @@ dependencies {
     implementation(include("io.github.llamalad7:mixinextras-forge:0.4.1"))
 
     //// Mod compatibilities
-    // JEI (for finding and giving mod-added stuff)
-    modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
-    modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
-    modRuntimeOnly("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
-    // Comforts 6.4.0 for Forge (and Spectre lib)
+    // REI (for finding and giving mod-added stuff) and Cloth Config
+    modLocalRuntime("curse.maven:roughly-enough-items-310111:5846923")
+    modLocalRuntime("curse.maven:cloth-config-348521:5729105")
+    // Comforts (and Spectre lib)
     modImplementation("curse.maven:comforts-276951:5503516")
     modLocalRuntime("curse.maven:spectrelib-993948:5217603")
-    // Sleep Tight 1.1.19 (and Moonlight Lib)
+    // Sleep Tight (and Moonlight/Selene Lib)
     modImplementation("curse.maven:sleep-tight-817564:5085863")
     modLocalRuntime("curse.maven:selene-499980:5478857")
 }
