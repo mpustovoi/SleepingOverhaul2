@@ -16,7 +16,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.cosmicdan.sleepingoverhaul.fabric.SleepingOverhaulFabric"
+      "github.cosmicdan.sleepingoverhaul.fabric.SleepingOverhaulFabric"
     ]
   },
   "mixins": [
