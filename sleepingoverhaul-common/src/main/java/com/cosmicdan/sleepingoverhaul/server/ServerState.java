@@ -98,7 +98,7 @@ public class ServerState {
         boolean reallySleeping = buf.readBoolean();
         if (reallySleeping && ModPlatform.canPlayerSleepNow(player)) {
             //noinspection CastToIncompatibleInterface
-            ((PlayerMixinProxy) player).setReallySleeping(reallySleeping);
+            ((PlayerMixinProxy) player).so2_$setReallySleeping(reallySleeping);
         } else {
             reallySleeping = false;
         }

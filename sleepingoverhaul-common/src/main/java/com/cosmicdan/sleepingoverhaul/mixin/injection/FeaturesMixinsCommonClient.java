@@ -16,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -64,8 +65,9 @@ abstract class FeaturesMixinsCommonClientChatScreen extends Screen implements Ch
         }
     }
 
+    @Unique
     @Override
-    public EditBox getInput() {
+    public EditBox so2_$getInput() {
         return input;
     }
 }
@@ -145,7 +147,7 @@ abstract class FeaturesMixinsCommonClientScreen {
     private void onKeyPressedChangeFocus(Screen instance, ComponentPath path, Operation<Void> original) {
         //noinspection ConstantValue
         if (SleepingOverhaul.clientConfig.inBedChatFixes.get() && (Object) this instanceof InBedChatScreen inBedChatScreen) {
-            if (((ChatScreenProxy) inBedChatScreen).getInput().isFocused()) {
+            if (((ChatScreenProxy) inBedChatScreen).so2_$getInput().isFocused()) {
                 // do nothing
                 return;
             }

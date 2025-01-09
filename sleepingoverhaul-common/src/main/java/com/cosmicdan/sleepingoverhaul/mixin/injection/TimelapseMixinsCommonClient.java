@@ -60,7 +60,7 @@ abstract class TimelapseMixinsCommonClientCamera {
                 Minecraft.getInstance().gameRenderer.setPanoramicMode(false);
                 SleepingOverhaul.clientState.advanceTimelapseCinematicStage();
                 previousMaxHeight = -1.0;
-            } else if (cineStage == 2 && ((PlayerMixinProxy) player).isReallySleeping()) {
+            } else if (cineStage == 2 && ((PlayerMixinProxy) player).so2_$isReallySleeping()) {
                 final ClientConfig.TimelapseCameraType timelapseCameraType = SleepingOverhaul.clientConfig.timelapseCameraType.get();
                 if ((timelapseCameraType != ClientConfig.TimelapseCameraType.None) && (levelIn instanceof ClientLevel level)) {
                     // level.getSunAngle is weird, so we calculate it ourselves

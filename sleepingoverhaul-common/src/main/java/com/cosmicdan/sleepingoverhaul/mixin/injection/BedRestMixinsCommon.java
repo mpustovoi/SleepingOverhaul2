@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -35,7 +36,7 @@ abstract class BedRestMixinsCommonPlayer implements PlayerMixinProxy {
     )
     private void afterSleepCounterIncrement(CallbackInfo ci) {
         if (SleepingOverhaul.serverConfig.bedRestEnabled.get()) {
-            if (!isReallySleeping()) {
+            if (!so2_$isReallySleeping()) {
                 final int dimScreenValue = SleepingOverhaul.serverConfig.bedRestScreenDimValue.get();
                 if (sleepCounter > dimScreenValue) {
                     sleepCounter = dimScreenValue;
@@ -52,16 +53,18 @@ abstract class BedRestMixinsCommonPlayer implements PlayerMixinProxy {
             at = @At("HEAD")
     )
     private void onStopSleepInBed(boolean wakeImmediately, boolean updateLevelForSleepingPlayers, CallbackInfo ci) {
-        setReallySleeping(false);
+        so2_$setReallySleeping(false);
     }
 
+    @Unique
     @Override
-    public final void setReallySleeping(final boolean isReallySleeping) {
+    public final void so2_$setReallySleeping(final boolean isReallySleeping) {
         reallySleeping = isReallySleeping;
     }
 
+    @Unique
     @Override
-    public final boolean isReallySleeping() {
+    public final boolean so2_$isReallySleeping() {
         return reallySleeping;
     }
 }
@@ -78,7 +81,7 @@ abstract class BedRestMixinsCommonSleepStatus {
     )
     private boolean onUpdateIsSleepingCheck(ServerPlayer serverPlayer, Operation<Boolean> original) {
         if (SleepingOverhaul.serverConfig.bedRestEnabled.get()) {
-            return ((PlayerMixinProxy) serverPlayer).isReallySleeping();
+            return ((PlayerMixinProxy) serverPlayer).so2_$isReallySleeping();
         } else {
             return original.call(serverPlayer);
         }

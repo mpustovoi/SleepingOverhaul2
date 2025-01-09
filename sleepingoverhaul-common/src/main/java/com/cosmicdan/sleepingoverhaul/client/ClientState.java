@@ -49,7 +49,7 @@ public class ClientState implements IClientState {
         boolean reallySleeping = buf.readBoolean();
         if (!reallySleeping) {
             player.displayClientMessage(Component.translatable("gui.sleepingoverhaul.sleepNotPossibleNow"), true);
-            ((PlayerMixinProxy) player).setReallySleeping(false);
+            ((PlayerMixinProxy) player).so2_$setReallySleeping(false);
             // re-enable sleep button after 2 seconds
             new Timer().schedule(new TimerTask() {
                 @Override
@@ -119,7 +119,7 @@ public class ClientState implements IClientState {
             SleepingOverhaul.clientState.sleepButtonEnable(false);
             final LocalPlayer player = Minecraft.getInstance().player;
             // Assume really-sleeping works so the client can update immediately; the server will bounce back if it fails.
-            ((PlayerMixinProxy) player).setReallySleeping(true);
+            ((PlayerMixinProxy) player).so2_$setReallySleeping(true);
             final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
             buf.writeBoolean(true);
             NetworkManager.sendToServer(SleepingOverhaul.PACKET_TRY_REALLY_SLEEPING, buf);
