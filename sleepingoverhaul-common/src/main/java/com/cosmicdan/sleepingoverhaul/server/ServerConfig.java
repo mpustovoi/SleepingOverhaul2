@@ -54,10 +54,10 @@ public class ServerConfig {
     private static final String featureAllowAnyDimensionTxt = " If enabled, allows resting/sleeping in any dimension. Will also disable explosion on use.\n" +
             " IMPORTANT - This will ONLY apply with vanilla and vanilla-like beds! Will not change spawn in other dimensions unless featureSetSpawnAnyDimension is also enabled.";
     public final ForgeConfigSpec.BooleanValue featureSetSpawnAnyDimension;
-    private static final String featureSetSpawnAnyDimensionTxt = " If enabled, resting/sleeping in a non-overworld bed will ALSO set the spawn to that bed.\n" +
+    private static final String featureSetSpawnAnyDimensionTxt = " If enabled, resting/sleeping in a non-overworld bed can ALSO set the spawn to that bed.\n" +
             " IMPORTANT - it will *overwrite* the overworld spawn point; it will NOT set per-dimension spawn points!\n" +
-            " Again, this will probably only apply to vanilla and vanilla-like beds.";
-
+            " Note that this option may or may not conflict with mod-added custom beds that differ to the vanilla Minecraft bed.\n" +
+            " This means that if this config is enabled, mod-added custom beds *may* still block it with their own config; or if disabled, mod-added beds *may* still allow setting spawn.";
 
 
     public ServerConfig(final Builder builder) {
