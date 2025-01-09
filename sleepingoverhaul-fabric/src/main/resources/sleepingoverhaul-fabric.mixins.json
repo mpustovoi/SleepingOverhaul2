@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.cosmicdan.sleepingoverhaul.fabric.mixin.injection",
+  "package": "github.cosmicdan.sleepingoverhaul.fabric.mixin.injection",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "BedRestMixinsFabricServerPlayer",
