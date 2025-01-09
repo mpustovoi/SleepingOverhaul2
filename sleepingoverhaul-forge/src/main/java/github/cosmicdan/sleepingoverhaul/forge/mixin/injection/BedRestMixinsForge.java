@@ -21,8 +21,7 @@ abstract class BedRestMixinsForgeServerPlayer {
      */
     @WrapOperation(
             method = "startSleepInBed",
-            at = @At(value = "INVOKE", target = "Lnet/minecraftforge/event/ForgeEventFactory;fireSleepingTimeCheck(Lnet/minecraft/world/entity/player/Player;Ljava/util/Optional;)Z"),
-            remap = false
+            at = @At(value = "INVOKE", target = "Lnet/minecraftforge/event/ForgeEventFactory;fireSleepingTimeCheck(Lnet/minecraft/world/entity/player/Player;Ljava/util/Optional;)Z", remap = false)
     )
     private boolean onTimeCheck(Player player, Optional<BlockPos> sleepingLocation, Operation<Boolean> original) {
         if (SleepingOverhaul.serverConfig.bedRestEnabled.get())
@@ -40,8 +39,7 @@ abstract class BedRestMixinsForgePlayer {
      */
     @WrapOperation(
             method = "tick",
-            at = @At(value = "INVOKE", target = "Lnet/minecraftforge/event/ForgeEventFactory;fireSleepingTimeCheck(Lnet/minecraft/world/entity/player/Player;Ljava/util/Optional;)Z"),
-            remap = false
+            at = @At(value = "INVOKE", target = "Lnet/minecraftforge/event/ForgeEventFactory;fireSleepingTimeCheck(Lnet/minecraft/world/entity/player/Player;Ljava/util/Optional;)Z", remap = false)
     )
     private boolean onTimeCheck(Player player, Optional<BlockPos> sleepingLocation, Operation<Boolean> original) {
         if (SleepingOverhaul.serverConfig.bedRestEnabled.get())
